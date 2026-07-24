@@ -1,0 +1,216 @@
+@use "../tokens" as *;
+
+.hero {
+  min-height: calc(100svh - 4.5rem);
+  display: grid;
+  align-items: end;
+  padding: clamp(2rem, 6vw, 5rem) clamp(1.25rem, 4vw, 3rem) clamp(2.5rem, 7vw, 5rem);
+  position: relative;
+  overflow: hidden;
+}
+
+.atmosphere {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(120deg, rgba(255, 253, 248, 0.15), transparent 40%),
+    radial-gradient(circle at 70% 40%, rgba(122, 46, 58, 0.18), transparent 35%),
+    url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%237a2e3a' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  pointer-events: none;
+  animation: drift 18s ease-in-out infinite alternate;
+}
+
+@keyframes drift {
+  from {
+    transform: scale(1) translate3d(0, 0, 0);
+  }
+  to {
+    transform: scale(1.04) translate3d(-1.5%, 1%, 0);
+  }
+}
+
+.copy {
+  position: relative;
+  max-width: 38rem;
+  display: grid;
+  gap: 1.1rem;
+}
+
+.brand {
+  font-family: $font-display;
+  font-size: clamp(3.4rem, 10vw, 6.5rem);
+  line-height: 0.92;
+  letter-spacing: -0.04em;
+  margin: 0;
+  animation: rise 700ms ease both;
+}
+
+.headline {
+  font-family: $font-display;
+  font-size: clamp(1.4rem, 3.2vw, 2rem);
+  font-weight: 500;
+  max-width: 18ch;
+  animation: rise 800ms ease 80ms both;
+}
+
+.support {
+  color: $color-muted;
+  font-size: 1.05rem;
+  max-width: 34ch;
+  animation: rise 900ms ease 140ms both;
+}
+
+.cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+  animation: rise 950ms ease 200ms both;
+}
+
+.primary,
+.secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 0.85rem 1.3rem;
+  text-decoration: none;
+  font-size: 0.95rem;
+}
+
+.primary {
+  background: $color-seal;
+  color: #fff;
+}
+
+.secondary {
+  background: transparent;
+  border: 1px solid $color-border;
+  color: $color-ink;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.section {
+  padding: clamp(3rem, 8vw, 6rem) clamp(1.25rem, 4vw, 3rem);
+  display: grid;
+  gap: 1rem;
+  max-width: 72rem;
+  margin: 0 auto;
+}
+
+.sectionTitle {
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  max-width: 14ch;
+}
+
+.sectionText {
+  color: $color-muted;
+  max-width: 42ch;
+}
+
+.steps {
+  display: grid;
+  gap: 1.25rem;
+  margin-top: 1.5rem;
+  counter-reset: step;
+}
+
+@media (min-width: 800px) {
+  .steps {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.step {
+  padding: 1.25rem 0;
+  border-top: 1px solid $color-border;
+  counter-increment: step;
+
+  &::before {
+    content: counter(step, decimal-leading-zero);
+    display: block;
+    color: $color-gold;
+    font-family: $font-display;
+    font-size: 0.95rem;
+    margin-bottom: 0.75rem;
+  }
+
+  h3 {
+    font-size: 1.2rem;
+    margin-bottom: 0.4rem;
+  }
+
+  p {
+    color: $color-muted;
+    font-size: 0.95rem;
+  }
+}
+
+.templates {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+@media (min-width: 800px) {
+  .templates {
+    grid-template-columns: 1fr;
+    max-width: 28rem;
+  }
+}
+
+.template {
+  min-height: 14rem;
+  border-radius: $radius-lg;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+
+.template span {
+  position: relative;
+  font-family: $font-display;
+  font-size: 1.4rem;
+}
+
+.t1 {
+  background:
+    radial-gradient(ellipse 60% 50% at 50% 30%, rgba(255, 253, 248, 0.2), transparent 55%),
+    linear-gradient(165deg, #5d2430, #9a4a57 55%, #c4a07a);
+}
+
+.t2 {
+  background:
+    radial-gradient(ellipse 42% 58% at 50% 42%, rgba(255, 253, 248, 0.22), transparent 70%),
+    linear-gradient(165deg, #4a3428, #7a5a45 48%, #c4a882);
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 18%;
+    transform: translateX(-50%);
+    width: 38%;
+    height: 58%;
+    border-radius: 999px 999px 0.4rem 0.4rem;
+    border: 1px solid rgba(255, 253, 248, 0.35);
+    background: rgba(255, 253, 248, 0.08);
+    pointer-events: none;
+  }
+}

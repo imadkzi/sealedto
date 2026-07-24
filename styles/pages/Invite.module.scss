@@ -1,0 +1,329 @@
+@use "../tokens" as *;
+
+.stage {
+  min-height: 100svh;
+  width: 100%;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  color: var(--invite-ink, #1c1714);
+  background: #f4efe8;
+  overflow-x: hidden;
+}
+
+.templateRoot {
+  width: 100%;
+  min-height: 100svh;
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+
+.templateOpened .veilCta {
+  display: none;
+}
+
+/* ——— Shared splash / reveal ——— */
+
+.splashStage {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+.letterReveal {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: clamp(1rem, 3vw, 2.5rem);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.letterRevealIn {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.goldRule {
+  width: 2.75rem;
+  height: 1px;
+  background: var(--invite-gold, #9a7b45);
+  opacity: 0.7;
+  margin: 0 auto;
+}
+
+/* ——— Soft veil — editorial light ——— */
+
+.veilRoot {
+  --invite-gold: color-mix(in srgb, var(--invite-accent, #7a2e3a) 18%, #b08d52);
+  --invite-muted: #7a7168;
+}
+
+.veilBackdrop {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      720px 480px at 50% 36%,
+      color-mix(in srgb, var(--invite-accent, #7a2e3a) 12%, #fff8f0),
+      transparent 58%
+    ),
+    radial-gradient(ellipse 90% 70% at 50% 50%, transparent 42%, rgba(36, 28, 22, 0.16) 100%),
+    linear-gradient(180deg, #fbf7f1 0%, #f0e8dc 100%);
+  transition: filter 1s ease;
+}
+
+.veilGrain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.22;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E");
+  mix-blend-mode: soft-light;
+}
+
+.veilSheet {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  display: grid;
+  place-content: center;
+  gap: 1.15rem;
+  text-align: center;
+  padding: 2rem;
+  /* Soft translucent fabric over a brighter room behind */
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--invite-accent, #7a2e3a) 10%, rgba(247, 241, 232, 0.94)) 0%,
+      color-mix(in srgb, var(--invite-accent, #7a2e3a) 16%, rgba(236, 227, 214, 0.9)) 100%
+    );
+  backdrop-filter: blur(1.5px);
+  will-change: transform, opacity, filter;
+}
+
+.veilGlow {
+  position: absolute;
+  width: min(70vw, 22rem);
+  height: min(70vw, 22rem);
+  border-radius: 50%;
+  left: 50%;
+  top: 42%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--invite-accent, #7a2e3a) 18%, transparent),
+    transparent 68%
+  );
+  pointer-events: none;
+  z-index: 3;
+}
+
+.veilSubtitle {
+  font-size: 0.78rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--invite-muted, #7a7168);
+  margin: 0;
+}
+
+.veilNames {
+  font-family: $font-display;
+  font-size: clamp(2.1rem, 8vw, 3.4rem);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  color: var(--invite-ink, #1c1714);
+  margin: 0;
+}
+
+.veilAmp {
+  display: block;
+  margin: 0.45rem 0;
+  font-size: 0.95rem;
+  letter-spacing: 0;
+  color: var(--invite-accent, #7a2e3a);
+}
+
+.veilCta {
+  position: absolute;
+  z-index: 6;
+  bottom: clamp(1.75rem, 5vw, 2.75rem);
+  left: 50%;
+  transform: translateX(-50%);
+  border: 0;
+  background: transparent;
+  padding: 0.4rem 0.2rem;
+  color: var(--invite-ink, #1c1714);
+  cursor: pointer;
+  font-family: $font-display;
+  font-size: 0.95rem;
+  letter-spacing: 0.06em;
+  border-bottom: 1px solid color-mix(in srgb, var(--invite-gold, #9a7b45) 70%, transparent);
+  transition:
+    opacity 350ms ease,
+    border-color 350ms ease,
+    transform 400ms cubic-bezier(0.22, 1, 0.36, 1);
+
+  &:hover {
+    opacity: 0.72;
+    transform: translateX(-50%) translateY(-1px);
+    border-color: var(--invite-gold, #9a7b45);
+  }
+}
+
+.veilBright .veilBackdrop {
+  filter: brightness(1.08) saturate(1.04);
+}
+
+/* ——— Invite letter ——— */
+
+.letter {
+  width: min(100%, 28rem);
+  max-height: min(86svh, 46rem);
+  overflow: auto;
+  background:
+    linear-gradient(165deg, rgba(255, 255, 255, 0.5), transparent 40%),
+    linear-gradient(180deg, #fffdf9 0%, #faf4ea 100%);
+  border: 1px solid rgba(28, 23, 20, 0.08);
+  border-radius: 0.2rem;
+  padding: clamp(1.4rem, 4vw, 2.15rem);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.65) inset,
+    0 28px 70px rgba(28, 23, 20, 0.14),
+    0 2px 8px rgba(28, 23, 20, 0.05);
+  display: grid;
+  gap: 0.95rem;
+  text-align: center;
+  -webkit-overflow-scrolling: touch;
+}
+
+.letterVeil {
+  width: min(100%, 29rem);
+  border: 0;
+  border-radius: 0;
+  background:
+    linear-gradient(180deg, rgba(255, 253, 248, 0.72), rgba(250, 244, 234, 0.88));
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.5) inset,
+    0 18px 50px rgba(28, 23, 20, 0.08);
+  padding: clamp(1.6rem, 5vw, 2.5rem) clamp(1.25rem, 4vw, 2rem);
+  backdrop-filter: blur(6px);
+}
+
+@media (min-width: 768px) {
+  .letter {
+    width: min(100%, 30rem);
+    padding: 2.2rem 2.1rem 1.85rem;
+  }
+
+  .letterVeil {
+    width: min(100%, 31rem);
+    padding: 2.5rem 2.25rem 2rem;
+  }
+}
+
+.eyebrow {
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  color: var(--invite-muted, #6b635c);
+}
+
+.names {
+  font-family: $font-display;
+  font-size: clamp(1.85rem, 6vw, 2.55rem);
+  line-height: 1.08;
+}
+
+.amp {
+  display: block;
+  color: var(--invite-accent, #7a2e3a);
+  font-size: 1rem;
+  margin: 0.35rem 0;
+}
+
+.details {
+  display: grid;
+  gap: 0.3rem;
+  color: var(--invite-muted, #6b635c);
+  font-size: clamp(0.9rem, 2.5vw, 1rem);
+}
+
+.message {
+  font-style: italic;
+  color: var(--invite-ink, #1c1714);
+}
+
+.rsvp {
+  display: grid;
+  gap: 0.75rem;
+  text-align: left;
+  margin-top: 0.35rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(28, 23, 20, 0.1);
+}
+
+.label {
+  display: grid;
+  gap: 0.3rem;
+  font-size: 0.85rem;
+  color: var(--invite-muted, #6b635c);
+}
+
+.input,
+.select {
+  width: 100%;
+  border: 1px solid rgba(28, 23, 20, 0.14);
+  border-radius: 0.45rem;
+  padding: 0.7rem 0.8rem;
+  background: #fff;
+}
+
+.statuses {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.45rem;
+}
+
+.status {
+  border: 1px solid rgba(28, 23, 20, 0.14);
+  background: #fff;
+  border-radius: 0.5rem;
+  padding: 0.7rem 0.4rem;
+  cursor: pointer;
+}
+
+.statusActive {
+  border-color: var(--invite-accent, #7a2e3a);
+  background: color-mix(in srgb, var(--invite-accent, #7a2e3a) 12%, #fff);
+}
+
+.submit {
+  border: 0;
+  border-radius: 999px;
+  padding: 0.85rem 1rem;
+  background: var(--invite-accent, #7a2e3a);
+  color: #fff;
+  cursor: pointer;
+  width: 100%;
+}
+
+.thanks {
+  padding: 0.95rem;
+  border-radius: 0.75rem;
+  background: color-mix(in srgb, var(--invite-accent, #7a2e3a) 10%, #fff);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .veilCta {
+    transition-duration: 200ms !important;
+  }
+}

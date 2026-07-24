@@ -1,0 +1,382 @@
+@use "../tokens" as *;
+
+.shell {
+  min-height: 100svh;
+  padding: 1rem clamp(1rem, 3vw, 1.75rem) 2.5rem;
+}
+
+.wrap {
+  width: min(100%, 68rem);
+  margin: 0 auto;
+  display: grid;
+  gap: 1.25rem;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.35rem 0 0.75rem;
+  border-bottom: 1px solid $color-border;
+}
+
+.brand {
+  font-family: $font-display;
+  font-size: clamp(1.2rem, 3vw, 1.45rem);
+  text-decoration: none;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.button,
+.ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 0.55rem 0.95rem;
+  text-decoration: none;
+  border: 0;
+  cursor: pointer;
+  font-size: 0.88rem;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.button {
+  background: $color-seal;
+  color: #fff;
+}
+
+.ghost {
+  background: $color-paper;
+  border: 1px solid $color-border;
+  color: $color-ink;
+}
+
+.pageHead {
+  display: grid;
+  gap: 0.35rem;
+  padding-top: 0.25rem;
+}
+
+.title {
+  font-size: clamp(1.55rem, 3.5vw, 2.1rem);
+  letter-spacing: -0.02em;
+}
+
+.muted {
+  color: $color-muted;
+  font-size: 0.95rem;
+}
+
+.grid {
+  display: grid;
+  gap: 0.9rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 720px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1100px) {
+  .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.inviteCard,
+.card {
+  background: $color-paper;
+  border: 1px solid $color-border;
+  border-radius: 1rem;
+  padding: 1.1rem 1.15rem;
+  display: grid;
+  gap: 0.55rem;
+  box-shadow: 0 10px 28px rgba(28, 23, 20, 0.05);
+}
+
+.inviteCard {
+  transition: border-color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+}
+
+.inviteCard:hover {
+  border-color: color-mix(in srgb, $color-seal 35%, $color-border);
+  box-shadow: 0 14px 34px rgba(28, 23, 20, 0.08);
+  transform: translateY(-1px);
+}
+
+.inviteCardTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.inviteTitle {
+  font-family: $font-display;
+  font-size: 1.35rem;
+  line-height: 1.15;
+  margin: 0;
+}
+
+.inviteTitle a {
+  text-decoration: none;
+}
+
+.inviteTitle a:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.12em;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  max-width: 100%;
+  border-radius: 999px;
+  padding: 0.22rem 0.65rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+  background: $color-seal-soft;
+  color: $color-seal;
+  white-space: nowrap;
+}
+
+.badgeDraft {
+  background: rgba(28, 23, 20, 0.06);
+  color: $color-muted;
+}
+
+.editLink {
+  font-size: 0.82rem;
+  color: $color-muted;
+  text-decoration: none;
+}
+
+.editLink:hover {
+  color: $color-ink;
+}
+
+.cardLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-top: 0.25rem;
+  font-size: 0.88rem;
+  color: $color-seal;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.cardLink:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.14em;
+}
+
+.empty {
+  display: grid;
+  gap: 0.75rem;
+  justify-items: start;
+  padding: 1.5rem 1.25rem;
+  background: $color-paper;
+  border: 1px dashed $color-border;
+  border-radius: 1rem;
+}
+
+.stack {
+  display: grid;
+  gap: 1rem;
+}
+
+.panel {
+  background: $color-paper;
+  border: 1px solid $color-border;
+  border-radius: 1rem;
+  padding: 1.15rem;
+  display: grid;
+  gap: 0.85rem;
+  box-shadow: 0 10px 28px rgba(28, 23, 20, 0.05);
+}
+
+.form {
+  display: grid;
+  gap: 0.9rem;
+  width: min(100%, 40rem);
+  background: $color-paper;
+  border: 1px solid $color-border;
+  border-radius: 1rem;
+  padding: 1.15rem;
+}
+
+.label {
+  display: grid;
+  gap: 0.35rem;
+  font-size: 0.88rem;
+  color: $color-muted;
+}
+
+.checkLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.92rem;
+  color: $color-ink;
+}
+
+.input,
+.select,
+.textarea {
+  width: 100%;
+  border: 1px solid $color-border;
+  border-radius: $radius-sm;
+  padding: 0.7rem 0.8rem;
+  background: #fff;
+  color: $color-ink;
+}
+
+.textarea {
+  min-height: 6rem;
+  resize: vertical;
+}
+
+.row {
+  display: grid;
+  gap: 0.9rem;
+}
+
+@media (min-width: 700px) {
+  .row {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.detailLayout {
+  display: grid;
+  gap: 1rem;
+}
+
+@media (min-width: 960px) {
+  .detailLayout {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    align-items: start;
+  }
+}
+
+.tableWrap {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid $color-border;
+  border-radius: 1rem;
+  background: $color-paper;
+}
+
+.table {
+  width: 100%;
+  min-width: 36rem;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  text-align: left;
+  padding: 0.8rem 0.95rem;
+  border-bottom: 1px solid $color-border;
+  font-size: 0.9rem;
+  vertical-align: top;
+}
+
+.table th {
+  color: $color-muted;
+  font-weight: 500;
+  background: rgba(28, 23, 20, 0.02);
+}
+
+.table tr:last-child td {
+  border-bottom: 0;
+}
+
+.counts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.6rem;
+}
+
+@media (min-width: 640px) {
+  .counts {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.count {
+  background: $color-paper;
+  border: 1px solid $color-border;
+  border-radius: 0.85rem;
+  padding: 0.75rem 0.85rem;
+}
+
+.count strong {
+  display: block;
+  font-family: $font-display;
+  font-size: 1.35rem;
+  line-height: 1.1;
+}
+
+.count span {
+  color: $color-muted;
+  font-size: 0.82rem;
+}
+
+.copyRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.publicLink {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.86rem;
+  color: $color-seal;
+  word-break: break-all;
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+.mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.82rem;
+  color: $color-muted;
+  word-break: break-all;
+}
+
+@media (max-width: 520px) {
+  .header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .actions {
+    width: 100%;
+  }
+
+  .actions .button,
+  .actions .ghost {
+    flex: 1 1 auto;
+  }
+}
