@@ -1,0 +1,43 @@
+.card {
+  display: grid;
+  gap: 1rem;
+  padding: 1.15rem;
+  border: 1px solid rgba(28, 23, 20, 0.1);
+  border-radius: 1rem;
+  background: #fff;
+}
+
+@media (min-width: 620px) {
+  .card {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+  }
+}
+
+.copy {
+  display: grid;
+  gap: 0.55rem;
+  min-width: 0;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.qr {
+  display: grid;
+  justify-items: center;
+  gap: 0.35rem;
+  color: #514a43;
+  font-size: 0.75rem;
+  text-decoration: none;
+}
+
+.qr img {
+  width: 7rem;
+  height: 7rem;
+  border: 1px solid rgba(28, 23, 20, 0.08);
+  background: #fff;
+}

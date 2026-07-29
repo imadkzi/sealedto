@@ -1,0 +1,134 @@
+@use "../../styles/tokens" as *;
+
+.picker {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.section {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.sectionTitle {
+  font-size: 0.82rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: $color-muted;
+  font-weight: 500;
+  margin: 0;
+}
+
+.familyBadge {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  border-radius: 999px;
+  padding: 0.35rem 0.85rem;
+  font-size: 0.88rem;
+  font-weight: 500;
+  background: $color-seal-soft;
+  color: $color-seal;
+}
+
+.variantGrid {
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 520px) {
+  .variantGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 900px) {
+  .variantGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.variantCard {
+  display: grid;
+  gap: 0.25rem;
+  text-align: left;
+  padding: 0.75rem 0.85rem;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  background: $color-paper;
+  cursor: pointer;
+  transition: border-color 160ms, box-shadow 160ms;
+  font: inherit;
+}
+
+.variantCard:hover {
+  border-color: color-mix(in srgb, $color-seal 30%, $color-border);
+}
+
+.variantActive {
+  border-color: $color-seal;
+  box-shadow: 0 0 0 1px $color-seal;
+}
+
+.variantName {
+  font-family: $font-display;
+  font-size: 1rem;
+  font-weight: 500;
+  color: $color-ink;
+}
+
+.variantDesc {
+  font-size: 0.78rem;
+  line-height: 1.4;
+  color: $color-muted;
+}
+
+.themeGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.themeSwatch {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  border: 0;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  font: inherit;
+}
+
+.swatchInner {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  transition: border-color 160ms, box-shadow 160ms;
+  overflow: hidden;
+  padding-bottom: 0.35rem;
+}
+
+.themeActive .swatchInner {
+  border-color: $color-seal;
+  box-shadow: 0 0 0 2px $color-seal;
+}
+
+.swatchAccent {
+  display: block;
+  width: 1rem;
+  height: 0.25rem;
+  border-radius: 2px;
+}
+
+.swatchLabel {
+  font-size: 0.68rem;
+  letter-spacing: 0.02em;
+  color: $color-muted;
+}

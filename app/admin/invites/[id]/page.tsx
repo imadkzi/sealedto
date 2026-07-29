@@ -1,19 +1,84 @@
 import Link from "next/link";
 import { headers } from "next/headers";
 import { notFound, redirect } from "next/navigation";
-import { PublicLinkCard } from "@/components/PublicLinkCard";
+import { ShareKit } from "@/components/admin/ShareKit";
 import { getSessionUser } from "@/lib/session";
 import {
-  TEMPLATES,
+  DEFAULT_INTRO_LINE,
+  deleteInvite,
   getInviteByIdForUser,
   updateInvite,
 } from "@/lib/invites";
 import { rsvpCounts } from "@/lib/guests";
+import {
+  InviteEditorShell,
+  type InviteDraftValues,
+} from "@/components/admin/InviteEditorShell";
+import { DeleteInviteButton } from "@/components/admin/DeleteInviteButton";
 import styles from "@/styles/pages/Admin.module.scss";
 
 function toLocalInputValue(date: Date) {
   const pad = (n: number) => String(n).padStart(2, "0");
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+}
+
+function toDateInputValue(date: Date | null) {
+  if (!date) return "";
+  const d = date instanceof Date ? date : new Date(date);
+  if (Number.isNaN(d.getTime())) return "";
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
+
+function parseGallery(raw: string) {
+  try {
+    const parsed = JSON.parse(raw) as unknown;
+    if (!Array.isArray(parsed)) return null;
+    return parsed
+      .filter(
+        (item): item is { src: string; alt?: string } =>
+          Boolean(
+            item &&
+              typeof item === "object" &&
+              typeof (item as { src?: string }).src === "string",
+          ),
+      )
+      .map((item) => ({
+        src: item.src,
+        ...(item.alt ? { alt: item.alt } : {}),
+      }));
+  } catch {
+    return null;
+  }
+}
+
+function parseSchedule(raw: string) {
+  try {
+    const parsed = JSON.parse(raw) as Array<{
+      time?: unknown;
+      label?: unknown;
+      description?: unknown;
+    }>;
+    if (!Array.isArray(parsed)) return [];
+    return parsed
+      .filter(
+        (item) =>
+          typeof item?.time === "string" &&
+          typeof item?.label === "string" &&
+          item.time.trim() &&
+          item.label.trim(),
+      )
+      .map((item) => ({
+        time: String(item.time).trim(),
+        label: String(item.label).trim(),
+        description:
+          typeof item.description === "string"
+            ? item.description.trim() || undefined
+            : undefined,
+      }));
+  } catch {
+    return [];
+  }
 }
 
 export default async function InviteAdminPage({
@@ -34,7 +99,22 @@ export default async function InviteAdminPage({
     const sessionUser = await getSessionUser();
     if (!sessionUser?.id) redirect("/login");
 
+    const heroImage = String(formData.get("heroImage") ?? "").trim();
+    const galleryImages = parseGallery(
+      String(formData.get("galleryImages") ?? "[]"),
+    );
+    const rsvpDeadlineRaw = String(formData.get("rsvpDeadline") ?? "").trim();
+    const inviteMode =
+      formData.get("inviteMode") === "save_the_date"
+        ? "save_the_date"
+        : "wedding";
+    const scheduleItems = parseSchedule(
+      String(formData.get("scheduleItems") ?? "[]"),
+    );
+    const venueLatRaw = String(formData.get("venueLat") ?? "").trim();
+    const venueLngRaw = String(formData.get("venueLng") ?? "").trim();
     const published = formData.get("published") === "on";
+
     await updateInvite(id, sessionUser.id, {
       partnerOne: String(formData.get("partnerOne") ?? "").trim(),
       partnerTwo: String(formData.get("partnerTwo") ?? "").trim(),
@@ -42,13 +122,35 @@ export default async function InviteAdminPage({
       venueName: String(formData.get("venueName") ?? "").trim(),
       venueAddress: String(formData.get("venueAddress") ?? "").trim(),
       message: String(formData.get("message") ?? "").trim(),
-      templateId:
-        TEMPLATES.find((t) => t.id === String(formData.get("templateId")))?.id ??
-        "veil",
-      accentColor: String(formData.get("accentColor") ?? "#7a2e3a"),
+      introLine: String(formData.get("introLine") ?? "").trim(),
+      ceremonyTime: String(formData.get("ceremonyTime") ?? "").trim() || null,
+      receptionTime: String(formData.get("receptionTime") ?? "").trim() || null,
+      inviteMode,
+      scheduleItems,
+      venueLat: venueLatRaw ? Number(venueLatRaw) : null,
+      venueLng: venueLngRaw ? Number(venueLngRaw) : null,
+      dressCode: String(formData.get("dressCode") ?? "").trim() || null,
+      registryUrl: String(formData.get("registryUrl") ?? "").trim() || null,
+      accommodationNote:
+        String(formData.get("accommodationNote") ?? "").trim() || null,
+      rsvpDeadline: rsvpDeadlineRaw
+        ? new Date(`${rsvpDeadlineRaw}T12:00:00`).toISOString()
+        : null,
+      variantId: String(formData.get("variantId") ?? "classic"),
+      colourThemeId: String(formData.get("colourThemeId") ?? "ivory"),
+      heroImage: heroImage || null,
+      galleryImages,
       published,
     });
     redirect(`/admin/invites/${id}`);
+  }
+
+  async function removeInvite() {
+    "use server";
+    const sessionUser = await getSessionUser();
+    if (!sessionUser?.id) redirect("/login");
+    await deleteInvite(id, sessionUser.id);
+    redirect("/admin");
   }
 
   const publicPath = `/i/${invite.slug}`;
@@ -57,9 +159,45 @@ export default async function InviteAdminPage({
   const proto = hdrs.get("x-forwarded-proto") ?? "http";
   const publicUrl = `${proto}://${host}${publicPath}`;
 
+  const initial: InviteDraftValues = {
+    partnerOne: invite.partner_one,
+    partnerTwo: invite.partner_two,
+    eventAt: toLocalInputValue(new Date(invite.event_at)),
+    venueName: invite.venue_name,
+    venueAddress: invite.venue_address ?? "",
+    message: invite.message ?? "",
+    introLine: invite.intro_line || DEFAULT_INTRO_LINE,
+    ceremonyTime: invite.ceremony_time ?? "",
+    receptionTime: invite.reception_time ?? "",
+    inviteMode: invite.invite_mode ?? "wedding",
+    scheduleItems:
+      invite.schedule_items ??
+      [
+        invite.ceremony_time
+          ? { time: invite.ceremony_time, label: "Ceremony" }
+          : null,
+        invite.reception_time
+          ? { time: invite.reception_time, label: "Reception" }
+          : null,
+      ].filter(
+        (item): item is { time: string; label: string } => item !== null,
+      ),
+    venueLat: invite.venue_lat,
+    venueLng: invite.venue_lng,
+    dressCode: invite.dress_code ?? "",
+    registryUrl: invite.registry_url ?? "",
+    accommodationNote: invite.accommodation_note ?? "",
+    rsvpDeadline: toDateInputValue(invite.rsvp_deadline),
+    variantId: invite.variant_id ?? "classic",
+    colourThemeId: invite.colour_theme_id ?? "ivory",
+    heroImage: invite.hero_image ?? "",
+    galleryImages: invite.gallery_images ?? [],
+    published: invite.published,
+  };
+
   return (
     <div className={styles.shell}>
-      <div className={styles.wrap}>
+      <div className={`${styles.wrap} ${styles.wrapWide}`}>
         <header className={styles.header}>
           <Link href="/admin" className={styles.brand}>
             ← Admin
@@ -74,6 +212,12 @@ export default async function InviteAdminPage({
             <Link className={styles.button} href={publicPath} target="_blank">
               Open invite
             </Link>
+            <DeleteInviteButton
+              inviteId={invite.id}
+              inviteName={`${invite.partner_one} & ${invite.partner_two}`}
+              action={removeInvite}
+              label="Delete invite"
+            />
           </div>
         </header>
 
@@ -107,106 +251,21 @@ export default async function InviteAdminPage({
           </div>
         </div>
 
-        <div className={styles.detailLayout}>
-          <PublicLinkCard
-            url={publicUrl}
-            published={invite.published}
-            title={`${invite.partner_one} & ${invite.partner_two} wedding invite`}
-          />
-
-          <form action={save} className={styles.form}>
-            <h2 className={styles.inviteTitle}>Invite details</h2>
-            <div className={styles.row}>
-              <label className={styles.label}>
-                Partner one
-                <input
-                  className={styles.input}
-                  name="partnerOne"
-                  defaultValue={invite.partner_one}
-                  required
-                />
-              </label>
-              <label className={styles.label}>
-                Partner two
-                <input
-                  className={styles.input}
-                  name="partnerTwo"
-                  defaultValue={invite.partner_two}
-                  required
-                />
-              </label>
-            </div>
-            <label className={styles.label}>
-              Date & time
-              <input
-                className={styles.input}
-                type="datetime-local"
-                name="eventAt"
-                defaultValue={toLocalInputValue(new Date(invite.event_at))}
-                required
-              />
-            </label>
-            <label className={styles.label}>
-              Venue
-              <input
-                className={styles.input}
-                name="venueName"
-                defaultValue={invite.venue_name}
-                required
-              />
-            </label>
-            <label className={styles.label}>
-              Venue address
-              <input
-                className={styles.input}
-                name="venueAddress"
-                defaultValue={invite.venue_address ?? ""}
-              />
-            </label>
-            <label className={styles.label}>
-              Message
-              <textarea
-                className={styles.textarea}
-                name="message"
-                defaultValue={invite.message ?? ""}
-              />
-            </label>
-            <label className={styles.label}>
-              Template
-              <select
-                className={styles.select}
-                name="templateId"
-                defaultValue={invite.template_id}
-              >
-                {TEMPLATES.map((template) => (
-                  <option key={template.id} value={template.id}>
-                    {template.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label className={styles.label}>
-              Accent colour
-              <input
-                className={styles.input}
-                type="color"
-                name="accentColor"
-                defaultValue={invite.accent_color}
-              />
-            </label>
-            <label className={styles.checkLabel}>
-              <input
-                type="checkbox"
-                name="published"
-                defaultChecked={invite.published}
-              />
-              Published
-            </label>
-            <button className={styles.button} type="submit">
-              Save changes
-            </button>
-          </form>
-        </div>
+        <InviteEditorShell
+          mode="edit"
+          initial={initial}
+          action={save}
+          submitLabel="Save changes"
+          guestHref={`/admin/invites/${invite.id}/guests`}
+          beforeForm={
+            <ShareKit
+              inviteId={invite.id}
+              publicUrl={publicUrl}
+              published={invite.published}
+              title={`${invite.partner_one} & ${invite.partner_two} wedding invite`}
+            />
+          }
+        />
       </div>
     </div>
   );

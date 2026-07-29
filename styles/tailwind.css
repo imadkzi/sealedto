@@ -1,0 +1,13 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ivory: #F8F5F1;
+  --color-stone: #ECE7E1;
+  --color-charcoal: #222222;
+  --color-muted: #777777;
+  --color-taupe: #B79B7A;
+  --color-paper: #FFFDF8;
+
+  --font-display: var(--font-display), "Iowan Old Style", "Palatino Linotype", serif;
+  --font-body: var(--font-body), "Avenir Next", "Segoe UI", sans-serif;
+}

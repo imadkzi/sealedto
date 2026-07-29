@@ -24,6 +24,9 @@
 .DS_Store
 *.pem
 
+# local invite uploads (swap to S3/R2 for production persistence)
+/uploads
+
 # debug
 npm-debug.log*
 yarn-debug.log*

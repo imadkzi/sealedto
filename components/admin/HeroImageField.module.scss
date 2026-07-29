@@ -1,0 +1,119 @@
+@use "../../styles/tokens" as *;
+
+.field {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.title {
+  font-size: 0.88rem;
+  color: $color-muted;
+}
+
+.modes {
+  display: inline-flex;
+  gap: 0.35rem;
+  padding: 0.2rem;
+  border-radius: 999px;
+  background: rgba(28, 23, 20, 0.04);
+}
+
+.mode {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  border: 0;
+  border-radius: 999px;
+  padding: 0.35rem 0.7rem;
+  background: transparent;
+  color: $color-muted;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.78rem;
+}
+
+.modeActive {
+  background: $color-paper;
+  color: $color-ink;
+  box-shadow: 0 1px 2px rgba(28, 23, 20, 0.08);
+}
+
+.dropzone {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 0.45rem;
+  padding: 1.4rem 1rem;
+  border: 1px dashed $color-border;
+  border-radius: $radius-md;
+  background: rgba(255, 255, 255, 0.55);
+  text-align: center;
+  color: $color-muted;
+  transition:
+    border-color 160ms ease,
+    background 160ms ease;
+}
+
+.dropzone p {
+  margin: 0;
+  color: $color-ink;
+  font-size: 0.92rem;
+}
+
+.dropzone span {
+  font-size: 0.74rem;
+}
+
+.dragging {
+  border-color: $color-seal;
+  background: $color-seal-soft;
+}
+
+.fileInput {
+  display: none;
+}
+
+.preview {
+  position: relative;
+  overflow: hidden;
+  border-radius: $radius-md;
+  border: 1px solid $color-border;
+  background: #111;
+}
+
+.preview img {
+  display: block;
+  width: 100%;
+  max-height: 14rem;
+  object-fit: cover;
+}
+
+.remove {
+  position: absolute;
+  top: 0.65rem;
+  right: 0.65rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  border: 0;
+  border-radius: 999px;
+  padding: 0.4rem 0.7rem;
+  background: rgba(0, 0, 0, 0.62);
+  color: #fff;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.75rem;
+}
+
+.error {
+  margin: 0;
+  color: #9b2c2c;
+  font-size: 0.82rem;
+}

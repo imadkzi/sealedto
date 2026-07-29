@@ -1,0 +1,620 @@
+/* ── Hero ── */
+.hero {
+  position: relative;
+  min-height: 100svh;
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: center;
+  gap: 2rem;
+  padding: clamp(2rem, 5vw, 5rem);
+}
+
+.heroCue {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(1.5rem, 4vh, 2.75rem);
+  transform: translateX(-50%);
+  z-index: 2;
+}
+
+@media (min-width: 768px) {
+  .hero {
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+  }
+}
+
+/* Split variant: image first on desktop */
+.heroSplit {
+  composes: hero;
+}
+
+@media (min-width: 768px) {
+  .heroSplit {
+    grid-template-columns: 1fr 1fr;
+  }
+  .heroSplit .heroImageWrap {
+    order: -1;
+  }
+}
+
+/* Minimal variant: centred, no image column */
+.heroMinimal {
+  composes: hero;
+  text-align: center;
+  justify-items: center;
+}
+
+@media (min-width: 768px) {
+  .heroMinimal {
+    grid-template-columns: 1fr;
+    max-width: 42rem;
+    margin: 0 auto;
+  }
+}
+
+/* Fullscreen variant */
+.heroFullscreen {
+  composes: hero;
+  min-height: 100svh;
+  position: relative;
+  overflow: hidden;
+}
+
+.heroFullscreenBg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.heroFullscreenBg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.heroFullscreenOverlay {
+  position: absolute;
+  inset: 0;
+  background: var(--invite-overlay, rgba(0, 0, 0, 0.45));
+  z-index: 1;
+}
+
+.heroFullscreen .heroText {
+  position: relative;
+  z-index: 2;
+}
+
+.heroText {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.heroEyebrow {
+  font-size: 0.75rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--invite-muted);
+  margin: 0;
+}
+
+.heroNames {
+  font-family: var(--invite-font-display, var(--font-display)), "Helvetica Neue", sans-serif;
+  font-size: clamp(2.8rem, 8vw, 7rem);
+  font-weight: 300;
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  color: var(--invite-ink);
+  margin: 0;
+}
+
+.heroDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  color: var(--invite-muted);
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+}
+
+.heroImageWrap {
+  width: 100%;
+  overflow: hidden;
+  border-radius: 0.15rem;
+}
+
+.heroImage {
+  width: 100%;
+  height: 100%;
+  max-height: 80vh;
+  object-fit: cover;
+}
+
+/* ── Story ── */
+.story {
+  max-width: 38rem;
+  margin: 0 auto;
+  text-align: center;
+}
+
+/* Split story: side-by-side */
+.storySplit {
+  composes: story;
+  max-width: 56rem;
+  text-align: left;
+  display: grid;
+  gap: 3rem;
+}
+
+@media (min-width: 768px) {
+  .storySplit {
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+  }
+}
+
+.storyBody {
+  font-size: clamp(1rem, 2.5vw, 1.15rem);
+  line-height: 1.7;
+  color: var(--invite-ink);
+  margin: 0;
+  white-space: pre-line;
+}
+
+/* ── Countdown ── */
+.countdown {
+  display: flex;
+  justify-content: center;
+  gap: clamp(2rem, 5vw, 4rem);
+  text-align: center;
+}
+
+.countdownUnit {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.countdownNumber {
+  font-family: var(--invite-font-display, var(--font-display)), "Helvetica Neue", sans-serif;
+  font-size: clamp(2.5rem, 7vw, 5rem);
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  color: var(--invite-ink);
+}
+
+.countdownLabel {
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--invite-muted);
+}
+
+.countdownDate {
+  margin: 2rem 0 0;
+  text-align: center;
+  color: var(--invite-muted);
+  font-size: 0.8rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+/* ── Venue ── */
+.venue {
+  max-width: 32rem;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.venueImage {
+  width: 100%;
+  border-radius: 0.15rem;
+  object-fit: cover;
+  margin-bottom: 2rem;
+}
+
+.venueName {
+  font-family: var(--invite-font-display, var(--font-display)), "Helvetica Neue", sans-serif;
+  font-size: clamp(1.4rem, 4vw, 2rem);
+  font-weight: 400;
+  margin: 0 0 0.75rem;
+  color: var(--invite-ink);
+}
+
+.venueAddress {
+  color: var(--invite-muted);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin: 0 0 1.25rem;
+}
+
+.venueMapLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--invite-accent);
+  text-decoration: none;
+  border-bottom: 1px solid currentColor;
+  padding-bottom: 0.15rem;
+}
+
+.venueMapActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.6rem;
+  margin-top: 1.4rem;
+}
+
+.venueMapThumbnail {
+  display: block;
+  width: min(100%, 44rem);
+  margin: 1.5rem auto;
+  overflow: hidden;
+  border: 1px solid var(--invite-border);
+  border-radius: 0.25rem;
+  background: var(--invite-surface);
+}
+
+.venueMapThumbnail img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 20 / 9;
+  object-fit: cover;
+  filter: saturate(0.72) contrast(0.92);
+}
+
+.venueMapButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  border: 1px solid var(--invite-border);
+  border-radius: 999px;
+  padding: 0.7rem 1rem;
+  background: var(--invite-surface);
+  color: var(--invite-ink);
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-decoration: none;
+  transition:
+    border-color 180ms ease,
+    background 180ms ease;
+}
+
+.venueMapButton:hover {
+  border-color: var(--invite-accent);
+  background: var(--invite-hover);
+}
+
+/* ── Timeline ── */
+.timeline {
+  max-width: 28rem;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.timelineItem {
+  display: grid;
+  grid-template-columns: 5rem 1fr;
+  gap: 1.5rem;
+  align-items: baseline;
+}
+
+.timelineTime {
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--invite-muted);
+  text-align: right;
+}
+
+.timelineLabel {
+  font-family: var(--invite-font-display, var(--font-display)), "Helvetica Neue", sans-serif;
+  font-size: 1.1rem;
+  color: var(--invite-ink);
+}
+
+.timelineDesc {
+  font-size: 0.9rem;
+  color: var(--invite-muted);
+  margin-top: 0.25rem;
+}
+
+/* ── Gallery ── */
+.gallery {
+  columns: 2;
+  column-gap: 1rem;
+  max-width: 52rem;
+  margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+  .gallery {
+    columns: 3;
+  }
+}
+
+/* Gallery variant: larger immersive grid */
+.galleryImmersive {
+  columns: 1;
+  max-width: 72rem;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.5rem;
+}
+
+@media (min-width: 640px) {
+  .galleryImmersive {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 960px) {
+  .galleryImmersive {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.galleryImmersive .galleryImage {
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+}
+
+.galleryItem {
+  break-inside: avoid;
+  margin-bottom: 1rem;
+  border-radius: 0.15rem;
+  overflow: hidden;
+}
+
+.galleryImage {
+  width: 100%;
+  display: block;
+}
+
+/* ── Quote ── */
+.quote {
+  max-width: 34rem;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.quoteText {
+  font-family: var(--invite-font-display, var(--font-display)), "Helvetica Neue", sans-serif;
+  font-size: clamp(1.3rem, 3.5vw, 1.8rem);
+  font-weight: 400;
+  font-style: italic;
+  line-height: 1.5;
+  color: var(--invite-ink);
+  margin: 0 0 0.75rem;
+}
+
+.quoteAttrib {
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--invite-muted);
+}
+
+/* ── RSVP ── */
+.rsvpCard {
+  max-width: 26rem;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.rsvpForm {
+  display: grid;
+  gap: 0.85rem;
+  text-align: left;
+  margin-top: 1.5rem;
+}
+
+.rsvpLabel {
+  display: grid;
+  gap: 0.3rem;
+  font-size: 0.85rem;
+  color: var(--invite-muted);
+}
+
+.rsvpInput {
+  width: 100%;
+  border: 1px solid var(--invite-border);
+  border-radius: 0.4rem;
+  padding: 0.75rem 0.85rem;
+  background: var(--invite-surface);
+  color: var(--invite-ink);
+  font: inherit;
+}
+
+.rsvpStatuses {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.45rem;
+}
+
+.rsvpStatus {
+  border: 1px solid var(--invite-border);
+  background: var(--invite-surface);
+  color: var(--invite-ink);
+  border-radius: 0.5rem;
+  padding: 0.75rem 0.4rem;
+  cursor: pointer;
+  font: inherit;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.rsvpStatusActive {
+  border-color: var(--invite-accent);
+  background: var(--invite-hover);
+}
+
+.rsvpSubmit {
+  border: 0;
+  border-radius: 999px;
+  padding: 0.9rem 1rem;
+  background: var(--invite-button-bg);
+  color: var(--invite-button-text);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+  width: 100%;
+  transition: opacity 0.2s;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
+}
+
+.rsvpThanks {
+  padding: 1.25rem;
+  border-radius: 0.75rem;
+  background: var(--invite-hover);
+  margin-top: 1.5rem;
+  font-size: 1.05rem;
+  color: var(--invite-ink);
+}
+
+/* ── Details ── */
+.detailsBlock {
+  max-width: 36rem;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.detailsGrid {
+  display: grid;
+  gap: 1.5rem;
+  margin-top: 0.5rem;
+}
+
+.detailItem {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.detailLabel {
+  margin: 0;
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--invite-muted);
+}
+
+.detailBody {
+  margin: 0;
+  color: var(--invite-ink);
+  font-size: 1rem;
+  line-height: 1.55;
+  white-space: pre-line;
+}
+
+.detailLink {
+  color: var(--invite-accent);
+  font-size: 0.9rem;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  border-bottom: 1px solid currentColor;
+  width: fit-content;
+  margin: 0 auto;
+  padding-bottom: 0.1rem;
+}
+
+/* ── Media placeholder ── */
+.mediaPlaceholder {
+  display: grid;
+  place-items: center;
+  min-height: 18rem;
+  border: 1px dashed var(--invite-border);
+  border-radius: 0.15rem;
+  background: color-mix(in srgb, var(--invite-ink) 3%, var(--invite-bg));
+  color: var(--invite-muted);
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-align: center;
+  padding: 1.5rem;
+}
+
+.mediaPlaceholderFullscreen {
+  composes: mediaPlaceholder;
+  position: absolute;
+  inset: 0;
+  min-height: 100%;
+  border: 0;
+  border-radius: 0;
+  background: color-mix(in srgb, var(--invite-ink) 8%, var(--invite-bg));
+}
+
+/* ── Sticky RSVP ── */
+.stickyRsvp {
+  position: fixed;
+  left: 50%;
+  bottom: 1rem;
+  z-index: 40;
+  transform: translateX(-50%);
+  display: none;
+  border: 0;
+  border-radius: 999px;
+  padding: 0.85rem 1.4rem;
+  background: var(--invite-button-bg);
+  color: var(--invite-button-text);
+  font: inherit;
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
+}
+
+@media (max-width: 768px) {
+  .stickyRsvp {
+    display: inline-flex;
+  }
+}
+
+.rsvpDeadline {
+  margin: 0 0 0.5rem;
+  text-align: center;
+  color: var(--invite-muted);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+}
+
+/* ── Footer ── */
+.footer {
+  text-align: center;
+  padding: 4rem 2rem 3rem;
+  color: var(--invite-muted);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.footerNames {
+  font-family: var(--invite-font-display, var(--font-display)), "Helvetica Neue", sans-serif;
+  font-size: 1.1rem;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--invite-ink);
+  margin-bottom: 0.5rem;
+}
+
+/* ── Fullscreen section wrapper ── */
+.fullscreenSection {
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  position: relative;
+}

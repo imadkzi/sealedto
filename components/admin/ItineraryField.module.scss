@@ -1,0 +1,82 @@
+.field {
+  display: grid;
+  gap: 0.85rem;
+  margin: 0;
+  padding: 1rem;
+  border: 1px solid rgba(28, 23, 20, 0.1);
+  border-radius: 0.8rem;
+}
+
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.title {
+  font-weight: 600;
+  color: #2c2620;
+}
+
+.help {
+  margin: 0.2rem 0 0;
+  color: #756d65;
+  font-size: 0.82rem;
+}
+
+.list {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.item {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 0.7rem;
+  align-items: start;
+  padding: 0.8rem;
+  border: 1px solid rgba(28, 23, 20, 0.08);
+  border-radius: 0.65rem;
+  background: rgba(28, 23, 20, 0.018);
+}
+
+.inputs {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.reorder {
+  display: grid;
+  justify-items: center;
+  gap: 0.2rem;
+  color: #8a8178;
+}
+
+.reorder button,
+.remove {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  padding: 0.2rem;
+}
+
+.reorder button:disabled {
+  opacity: 0.25;
+  cursor: default;
+}
+
+.remove {
+  color: #9b2c2c;
+}
+
+.empty {
+  min-height: 5rem;
+  border: 1px dashed rgba(28, 23, 20, 0.2);
+  border-radius: 0.65rem;
+  background: transparent;
+  color: #756d65;
+  cursor: pointer;
+}

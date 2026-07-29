@@ -1,0 +1,58 @@
+.page {
+  min-height: 100svh;
+}
+
+.bar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.65rem 1rem;
+  padding: 0.65rem 1rem;
+  background: rgba(28, 23, 20, 0.92);
+  color: #f4efe8;
+  backdrop-filter: blur(8px);
+}
+
+.badge {
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.meta {
+  flex: 1;
+  font-size: 0.85rem;
+  opacity: 0.75;
+}
+
+.refresh {
+  border: 1px solid rgba(244, 239, 232, 0.28);
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 0.82rem;
+  padding: 0.4rem 0.85rem;
+  cursor: pointer;
+}
+
+.refresh:hover {
+  background: rgba(244, 239, 232, 0.08);
+}
+
+.empty {
+  min-height: 100svh;
+  display: grid;
+  place-content: center;
+  gap: 0.75rem;
+  text-align: center;
+  padding: 2rem;
+  color: #5c554e;
+}
+
+.empty a {
+  color: #2c2620;
+}

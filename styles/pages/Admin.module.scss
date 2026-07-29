@@ -12,6 +12,10 @@
   gap: 1.25rem;
 }
 
+.wrapWide {
+  width: min(100%, 92rem);
+}
+
 .header {
   display: flex;
   align-items: center;
@@ -112,6 +116,49 @@
   transition: border-color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
 }
 
+.dashboardSummary {
+  display: grid;
+  gap: 0.55rem;
+  margin-top: 0.35rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid $color-border;
+}
+
+.dashboardNumbers {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.45rem;
+  color: $color-muted;
+  font-size: 0.72rem;
+}
+
+.dashboardNumbers strong {
+  display: block;
+  color: $color-ink;
+  font-family: $font-display;
+  font-size: 1.05rem;
+}
+
+.progressTrack {
+  height: 0.35rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(28, 23, 20, 0.07);
+}
+
+.progressTrack span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: #8b6f4e;
+}
+
+.checklist {
+  margin: 0;
+  color: $color-muted;
+  font-size: 0.75rem;
+}
+
 .inviteCard:hover {
   border-color: color-mix(in srgb, $color-seal 35%, $color-border);
   box-shadow: 0 14px 34px rgba(28, 23, 20, 0.08);
@@ -123,6 +170,12 @@
   align-items: center;
   justify-content: space-between;
   gap: 0.5rem;
+}
+
+.inviteCardActions {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
 }
 
 .inviteTitle {

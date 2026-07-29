@@ -1,0 +1,35 @@
+@use "../../styles/tokens" as *;
+
+.inlineForm {
+  display: grid;
+  gap: 0.45rem;
+  min-width: 12rem;
+}
+
+.rowActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.linkCell {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.delete {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 0.45rem 0.8rem;
+  border: 1px solid rgba(155, 44, 44, 0.25);
+  background: #fff;
+  color: #9b2c2c;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.82rem;
+}

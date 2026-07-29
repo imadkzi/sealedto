@@ -1,0 +1,100 @@
+.shell {
+  display: grid;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.form {
+  width: 100%;
+  max-width: none;
+}
+
+.previewRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1rem;
+  padding: 0.95rem 1.1rem;
+  background: #fff;
+  border: 1px solid rgba(28, 23, 20, 0.1);
+  border-radius: 1rem;
+}
+
+.previewCopy {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.previewLabel {
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #6f675f;
+}
+
+.previewMeta {
+  font-size: 0.9rem;
+  color: #3a342e;
+}
+
+.steps {
+  display: flex;
+  gap: 0.45rem;
+  overflow-x: auto;
+  padding: 0.2rem 0 0.4rem;
+}
+
+.step,
+.stepActive {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border: 1px solid rgba(28, 23, 20, 0.1);
+  border-radius: 999px;
+  background: #fff;
+  color: #756d65;
+  padding: 0.45rem 0.7rem;
+  font: inherit;
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+
+.step span,
+.stepActive span {
+  display: grid;
+  place-items: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 50%;
+  background: rgba(28, 23, 20, 0.06);
+  font-size: 0.7rem;
+}
+
+.stepActive {
+  background: #2c2620;
+  color: #fff;
+  border-color: #2c2620;
+}
+
+.stepActive span {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.stage {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.stageHidden {
+  display: none;
+}
+
+.wizardActions {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding-top: 0.4rem;
+  border-top: 1px solid rgba(28, 23, 20, 0.08);
+}

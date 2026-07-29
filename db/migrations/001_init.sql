@@ -18,7 +18,7 @@ create table if not exists invites (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references users (id) on delete cascade,
   slug text not null unique,
-  template_id text not null default 'veil',
+  template_id text not null default 'default',
   partner_one text not null,
   partner_two text not null,
   event_at timestamptz not null,

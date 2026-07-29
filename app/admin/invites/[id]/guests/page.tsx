@@ -5,9 +5,14 @@ import { getSessionUser } from "@/lib/session";
 import { getInviteByIdForUser } from "@/lib/invites";
 import {
   createCuratedGuest,
+  createCuratedGuestsBulk,
+  deleteGuest,
   listGuestsForInvite,
   rsvpCounts,
+  updateCuratedGuest,
 } from "@/lib/guests";
+import { GuestRowActions } from "@/components/admin/GuestRowActions";
+import { GuestCsvTools } from "@/components/admin/GuestCsvTools";
 import styles from "@/styles/pages/Admin.module.scss";
 
 export default async function GuestsPage({
@@ -43,6 +48,57 @@ export default async function GuestsPage({
     if (!displayName) redirect(`/admin/invites/${id}/guests?error=invalid`);
 
     await createCuratedGuest(owned.id, displayName);
+    redirect(`/admin/invites/${id}/guests`);
+  }
+
+  async function importGuests(formData: FormData) {
+    "use server";
+    const sessionUser = await getSessionUser();
+    if (!sessionUser?.id) redirect("/login");
+    const owned = await getInviteByIdForUser(id, sessionUser.id);
+    if (!owned) redirect("/admin");
+
+    const names = String(formData.get("names") ?? "")
+      .split(/\r?\n/)
+      .map((line) => line.trim())
+      .filter(Boolean);
+
+    if (!names.length) {
+      redirect(`/admin/invites/${id}/guests?error=invalid`);
+    }
+
+    await createCuratedGuestsBulk(owned.id, names);
+    redirect(`/admin/invites/${id}/guests`);
+  }
+
+  async function updateGuest(formData: FormData) {
+    "use server";
+    const sessionUser = await getSessionUser();
+    if (!sessionUser?.id) redirect("/login");
+    const owned = await getInviteByIdForUser(id, sessionUser.id);
+    if (!owned) redirect("/admin");
+
+    const guestId = String(formData.get("guestId") ?? "").trim();
+    const displayName = String(formData.get("displayName") ?? "").trim();
+    if (!guestId || !displayName) {
+      redirect(`/admin/invites/${id}/guests?error=invalid`);
+    }
+
+    await updateCuratedGuest(guestId, owned.id, displayName);
+    redirect(`/admin/invites/${id}/guests`);
+  }
+
+  async function removeGuest(formData: FormData) {
+    "use server";
+    const sessionUser = await getSessionUser();
+    if (!sessionUser?.id) redirect("/login");
+    const owned = await getInviteByIdForUser(id, sessionUser.id);
+    if (!owned) redirect("/admin");
+
+    const guestId = String(formData.get("guestId") ?? "").trim();
+    if (!guestId) redirect(`/admin/invites/${id}/guests?error=invalid`);
+
+    await deleteGuest(guestId, owned.id);
     redirect(`/admin/invites/${id}/guests`);
   }
 
@@ -82,19 +138,35 @@ export default async function GuestsPage({
         </div>
 
         <div className={styles.detailLayout}>
-          <form action={addGuest} className={styles.form}>
-            <h2 className={styles.inviteTitle}>Add curated guest</h2>
-            <p className={styles.muted}>
-              Creates a personal link that greets them by name.
-            </p>
-            <label className={styles.label}>
-              Guest name
-              <input className={styles.input} name="displayName" required />
-            </label>
-            <button className={styles.button} type="submit">
-              Add guest
-            </button>
-          </form>
+          <div className={styles.stack}>
+            <form action={addGuest} className={styles.form}>
+              <h2 className={styles.inviteTitle}>Add curated guest</h2>
+              <p className={styles.muted}>
+                Creates a personal link that greets them by name.
+              </p>
+              <label className={styles.label}>
+                Guest name
+                <input className={styles.input} name="displayName" required />
+              </label>
+              <button className={styles.button} type="submit">
+                Add guest
+              </button>
+            </form>
+
+            <GuestCsvTools
+              inviteId={invite.id}
+              origin={origin}
+              importAction={importGuests}
+              guests={guests.map((guest) => ({
+                display_name: guest.display_name,
+                rsvp_status: guest.rsvp_status,
+                party_size: guest.party_size,
+                rsvp_note: guest.rsvp_note,
+                is_curated: guest.is_curated,
+                token: guest.token,
+              }))}
+            />
+          </div>
 
           <div className={styles.tableWrap}>
             <table className={styles.table}>
@@ -104,37 +176,31 @@ export default async function GuestsPage({
                   <th>Status</th>
                   <th>Party</th>
                   <th>Link</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {guests.length === 0 ? (
                   <tr>
-                    <td colSpan={4}>No guests yet.</td>
+                    <td colSpan={5}>No guests yet.</td>
                   </tr>
                 ) : (
                   guests.map((guest) => (
-                    <tr key={guest.id}>
-                      <td>
-                        {guest.display_name}
-                        {guest.is_curated ? " · curated" : ""}
-                      </td>
-                      <td>{guest.rsvp_status}</td>
-                      <td>{guest.party_size}</td>
-                      <td>
-                        {guest.is_curated ? (
-                          <a
-                            className={styles.publicLink}
-                            href={`${origin}/g/${guest.token}`}
-                            target="_blank"
-                            rel="noreferrer"
-                          >
-                            Open personal link
-                          </a>
-                        ) : (
-                          <span className={styles.mono}>Public RSVP</span>
-                        )}
-                      </td>
-                    </tr>
+                    <GuestRowActions
+                      key={guest.id}
+                      guest={{
+                        id: guest.id,
+                        display_name: guest.display_name,
+                        is_curated: guest.is_curated,
+                        rsvp_status: guest.rsvp_status,
+                        party_size: guest.party_size,
+                        personalUrl: guest.is_curated
+                          ? `${origin}/g/${guest.token}`
+                          : undefined,
+                      }}
+                      updateAction={updateGuest}
+                      deleteAction={removeGuest}
+                    />
                   ))
                 )}
               </tbody>

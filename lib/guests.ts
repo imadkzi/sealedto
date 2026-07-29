@@ -65,6 +65,57 @@ export async function createCuratedGuest(inviteId: string, displayName: string) 
   return mapGuest(rows[0]);
 }
 
+/** Create many curated guests (e.g. CSV import). Skips blank names. */
+export async function createCuratedGuestsBulk(
+  inviteId: string,
+  displayNames: string[],
+) {
+  const created: Guest[] = [];
+  for (const raw of displayNames) {
+    const displayName = raw.trim();
+    if (!displayName) continue;
+    created.push(await createCuratedGuest(inviteId, displayName));
+  }
+  return created;
+}
+
+export async function getGuestByIdForInvite(guestId: string, inviteId: string) {
+  const rows = await query<GuestRow>(
+    `select id::text as id, invite_id::text as invite_id, display_name, token,
+            is_curated, rsvp_status, party_size, rsvp_note, rsvp_at, created_at
+     from guests
+     where id = $1 and invite_id = $2
+     limit 1`,
+    [guestId, inviteId],
+  );
+  return rows[0] ? mapGuest(rows[0]) : null;
+}
+
+export async function updateCuratedGuest(
+  guestId: string,
+  inviteId: string,
+  displayName: string,
+) {
+  const rows = await query<GuestRow>(
+    `update guests set display_name = $3
+     where id = $1 and invite_id = $2 and is_curated = true
+     returning id::text as id, invite_id::text as invite_id, display_name, token,
+               is_curated, rsvp_status, party_size, rsvp_note, rsvp_at, created_at`,
+    [guestId, inviteId, displayName],
+  );
+  return rows[0] ? mapGuest(rows[0]) : null;
+}
+
+export async function deleteGuest(guestId: string, inviteId: string) {
+  const rows = await query<{ id: string }>(
+    `delete from guests
+     where id = $1 and invite_id = $2
+     returning id::text as id`,
+    [guestId, inviteId],
+  );
+  return Boolean(rows[0]);
+}
+
 export async function submitPublicRsvp(input: {
   inviteId: string;
   displayName: string;
