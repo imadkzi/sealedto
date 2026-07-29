@@ -64,8 +64,6 @@ function emptyDraft(): InviteDraftValues {
     venueAddress: "",
     message: "",
     introLine: DEFAULT_INTRO_LINE,
-    ceremonyTime: "",
-    receptionTime: "",
     inviteMode: "wedding",
     scheduleItems: [
       { time: "14:00", label: "Ceremony" },
@@ -101,8 +99,6 @@ export default async function NewInvitePage() {
     const venueAddress = String(formData.get("venueAddress") ?? "").trim();
     const message = String(formData.get("message") ?? "").trim();
     const introLine = String(formData.get("introLine") ?? "").trim();
-    const ceremonyTime = String(formData.get("ceremonyTime") ?? "").trim();
-    const receptionTime = String(formData.get("receptionTime") ?? "").trim();
     const inviteMode =
       formData.get("inviteMode") === "save_the_date"
         ? "save_the_date"
@@ -139,8 +135,6 @@ export default async function NewInvitePage() {
       venueAddress,
       message,
       introLine,
-      ceremonyTime: ceremonyTime || undefined,
-      receptionTime: receptionTime || undefined,
       inviteMode,
       scheduleItems,
       venueLat: venueLatRaw ? Number(venueLatRaw) : null,

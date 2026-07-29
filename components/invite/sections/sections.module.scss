@@ -5,8 +5,11 @@
   display: grid;
   grid-template-columns: 1fr;
   align-items: center;
-  gap: 2rem;
+  /* Keep the stacked rows tight instead of letting them stretch apart. */
+  align-content: center;
+  gap: 1.25rem;
   padding: clamp(2rem, 5vw, 5rem);
+  padding-bottom: clamp(4rem, 12vh, 6rem);
 }
 
 .heroCue {
@@ -21,6 +24,7 @@
   .hero {
     grid-template-columns: 1fr 1fr;
     gap: 4rem;
+    padding-bottom: clamp(2rem, 5vw, 5rem);
   }
 }
 
@@ -99,10 +103,21 @@
   margin: 0;
 }
 
+/* Curated links greet the guest by name — give it real presence. */
+.heroGreeting {
+  font-family: var(--invite-font-display, var(--font-display)), Georgia, "Times New Roman", serif;
+  font-size: clamp(1rem, 2.4vw, 1.65rem);
+  letter-spacing: 0.02em;
+  text-transform: none;
+  line-height: 1.2;
+  color: var(--invite-ink);
+  margin: 0 0 0.35rem;
+}
+
 .heroNames {
-  font-family: var(--invite-font-display, var(--font-display)), "Helvetica Neue", sans-serif;
+  font-family: var(--invite-font-display, var(--font-display)), Georgia, "Times New Roman", serif;
   font-size: clamp(2.8rem, 8vw, 7rem);
-  font-weight: 300;
+  font-weight: 400;
   line-height: 1.02;
   letter-spacing: -0.03em;
   color: var(--invite-ink);
@@ -127,8 +142,14 @@
 .heroImage {
   width: 100%;
   height: 100%;
-  max-height: 80vh;
+  max-height: 42svh;
   object-fit: cover;
+}
+
+@media (min-width: 768px) {
+  .heroImage {
+    max-height: 80vh;
+  }
 }
 
 /* ── Story ── */
@@ -176,14 +197,26 @@
   gap: 0.35rem;
 }
 
-.countdownNumber {
-  font-family: var(--invite-font-display, var(--font-display)), "Helvetica Neue", sans-serif;
+/* Digits roll through this window as the clock ticks. */
+.countdownRoll {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  height: 1em;
+  font-family: var(--invite-font-display, var(--font-display)), Georgia, "Times New Roman", serif;
   font-size: clamp(2.5rem, 7vw, 5rem);
   font-weight: 300;
   line-height: 1;
   letter-spacing: -0.02em;
   font-variant-numeric: tabular-nums;
   color: var(--invite-ink);
+}
+
+.countdownNumber {
+  display: block;
+  font: inherit;
+  letter-spacing: inherit;
+  font-variant-numeric: inherit;
 }
 
 .countdownLabel {
@@ -217,7 +250,7 @@
 }
 
 .venueName {
-  font-family: var(--invite-font-display, var(--font-display)), "Helvetica Neue", sans-serif;
+  font-family: var(--invite-font-display, var(--font-display)), Georgia, "Times New Roman", serif;
   font-size: clamp(1.4rem, 4vw, 2rem);
   font-weight: 400;
   margin: 0 0 0.75rem;
@@ -317,7 +350,7 @@
 }
 
 .timelineLabel {
-  font-family: var(--invite-font-display, var(--font-display)), "Helvetica Neue", sans-serif;
+  font-family: var(--invite-font-display, var(--font-display)), Georgia, "Times New Roman", serif;
   font-size: 1.1rem;
   color: var(--invite-ink);
 }
@@ -389,7 +422,7 @@
 }
 
 .quoteText {
-  font-family: var(--invite-font-display, var(--font-display)), "Helvetica Neue", sans-serif;
+  font-family: var(--invite-font-display, var(--font-display)), Georgia, "Times New Roman", serif;
   font-size: clamp(1.3rem, 3.5vw, 1.8rem);
   font-weight: 400;
   font-style: italic;
@@ -602,7 +635,7 @@
 }
 
 .footerNames {
-  font-family: var(--invite-font-display, var(--font-display)), "Helvetica Neue", sans-serif;
+  font-family: var(--invite-font-display, var(--font-display)), Georgia, "Times New Roman", serif;
   font-size: 1.1rem;
   font-weight: 400;
   text-transform: none;

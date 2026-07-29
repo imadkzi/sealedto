@@ -11,7 +11,7 @@ interface Props {
 }
 
 export function TimelineSection({ invitation }: Props) {
-  const { container, item } = useStagger({ stagger: 0.1 });
+  const { container, item } = useStagger({ variant: "drift", stagger: 0.12 });
   if (invitation.mode === "save_the_date" || !invitation.schedule?.length) {
     return null;
   }

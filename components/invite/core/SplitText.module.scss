@@ -1,0 +1,14 @@
+.root {
+  display: inline;
+}
+
+/* Words stay whole so wrapping matches unsplit text. */
+.word {
+  display: inline-block;
+  white-space: pre;
+}
+
+.piece {
+  display: inline-block;
+  will-change: transform, opacity;
+}

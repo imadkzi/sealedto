@@ -12,36 +12,19 @@ interface Props {
 }
 
 export function ShareKit({ inviteId, publicUrl, title, published }: Props) {
-  const [copied, setCopied] = useState<"link" | "invite" | null>(null);
-  const [shareError, setShareError] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
+  const [copyError, setCopyError] = useState<string | null>(null);
   const message = `${title}\n${publicUrl}`;
 
-  async function copyText(text: string, kind: "link" | "invite") {
-    setShareError(null);
+  async function copyInvite() {
+    setCopyError(null);
     try {
-      await navigator.clipboard.writeText(text);
-      setCopied(kind);
-      window.setTimeout(() => setCopied(null), 1600);
+      await navigator.clipboard.writeText(message);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1600);
     } catch {
-      setShareError("Could not copy — select the link instead.");
+      setCopyError("Could not copy — select the link instead.");
     }
-  }
-
-  async function shareNative() {
-    setShareError(null);
-    if (typeof navigator !== "undefined" && navigator.share) {
-      try {
-        await navigator.share({
-          title,
-          text: "You're invited",
-          url: publicUrl,
-        });
-        return;
-      } catch (error) {
-        if ((error as { name?: string } | null)?.name === "AbortError") return;
-      }
-    }
-    await copyText(publicUrl, "link");
   }
 
   return (
@@ -73,23 +56,9 @@ export function ShareKit({ inviteId, publicUrl, title, published }: Props) {
           <button
             type="button"
             className={adminStyles.button}
-            onClick={() => void shareNative()}
+            onClick={() => void copyInvite()}
           >
-            Share
-          </button>
-          <button
-            type="button"
-            className={adminStyles.ghost}
-            onClick={() => void copyText(publicUrl, "link")}
-          >
-            {copied === "link" ? "Copied" : "Copy link"}
-          </button>
-          <button
-            type="button"
-            className={adminStyles.ghost}
-            onClick={() => void copyText(message, "invite")}
-          >
-            {copied === "invite" ? "Copied" : "Copy invite"}
+            {copied ? "Copied" : "Copy invite"}
           </button>
           <a
             className={adminStyles.ghost}
@@ -114,7 +83,7 @@ export function ShareKit({ inviteId, publicUrl, title, published }: Props) {
             Email
           </a>
         </div>
-        {shareError ? <p className={adminStyles.muted}>{shareError}</p> : null}
+        {copyError ? <p className={adminStyles.muted}>{copyError}</p> : null}
       </div>
 
       <a

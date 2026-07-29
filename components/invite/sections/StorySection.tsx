@@ -19,7 +19,7 @@ export function StorySection({ invitation, layout = "default" }: Props) {
           <SectionTitle>Our Story</SectionTitle>
           <Divider variant="leaf" />
         </div>
-        <AnimatedReveal delay={0.15}>
+        <AnimatedReveal variant="mask" delay={0.15}>
           <p className={styles.storyBody}>
             {invitation.story ?? invitation.message}
           </p>

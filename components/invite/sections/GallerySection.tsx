@@ -12,7 +12,7 @@ interface Props {
 }
 
 export function GallerySection({ invitation, layout = "default" }: Props) {
-  const { container, item } = useStagger({ stagger: 0.08 });
+  const { container, item } = useStagger({ variant: "scale", stagger: 0.09 });
   if (!invitation.gallery?.length) return null;
 
   return (

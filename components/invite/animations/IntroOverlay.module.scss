@@ -17,7 +17,7 @@
 }
 
 .initials {
-  font-family: var(--invite-font-display, var(--font-display)), "Helvetica Neue", sans-serif;
+  font-family: var(--invite-font-display, var(--font-display)), Georgia, "Times New Roman", serif;
   font-size: clamp(2.5rem, 8vw, 4rem);
   font-weight: 400;
   letter-spacing: 0.12em;
@@ -39,8 +39,17 @@
   margin: 0;
 }
 
+.greeting {
+  composes: copy;
+  font-family: var(--invite-font-display, var(--font-display)), Georgia, "Times New Roman", serif;
+  font-size: clamp(0.95rem, 2.8vw, 1.4rem);
+  letter-spacing: 0.02em;
+  text-transform: none;
+  color: var(--invite-ink);
+}
+
 .names {
-  font-family: var(--invite-font-display, var(--font-display)), "Helvetica Neue", sans-serif;
+  font-family: var(--invite-font-display, var(--font-display)), Georgia, "Times New Roman", serif;
   font-size: clamp(1.6rem, 5vw, 2.4rem);
   font-weight: 400;
   color: var(--invite-ink);

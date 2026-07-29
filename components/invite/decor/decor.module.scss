@@ -5,15 +5,8 @@
   color: var(--invite-decor, var(--invite-accent));
 }
 
-.corners {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  color: var(--invite-decor, var(--invite-accent));
-  opacity: 0.45;
-  z-index: 1;
-}
-
-.corner {
-  position: absolute;
+/* Scale the glyphs about themselves, not the SVG origin. */
+.separator :global(svg) > * {
+  transform-box: fill-box;
+  transform-origin: center;
 }

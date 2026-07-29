@@ -13,8 +13,6 @@ export type InviteDraftValues = {
   venueAddress: string;
   message: string;
   introLine: string;
-  ceremonyTime: string;
-  receptionTime: string;
   inviteMode: "wedding" | "save_the_date";
   scheduleItems: ItineraryItem[];
   venueLat: number | null;
@@ -58,8 +56,6 @@ export function buildPreviewInvitation(draft: InviteDraftValues): Invitation {
     weddingDate: Number.isNaN(weddingDate.getTime())
       ? new Date(Date.now() + 1000 * 60 * 60 * 24 * 90)
       : weddingDate,
-    ceremonyTime: draft.ceremonyTime.trim() || undefined,
-    receptionTime: draft.receptionTime.trim() || undefined,
     venue: {
       name: draft.venueName.trim() || "Venue",
       address: draft.venueAddress.trim() || undefined,

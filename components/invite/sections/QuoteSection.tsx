@@ -1,6 +1,6 @@
 "use client";
 
-import { SectionSpacing, AnimatedReveal } from "../core";
+import { SectionSpacing, AnimatedReveal, SplitText } from "../core";
 import type { Invitation } from "../types";
 import styles from "./sections.module.scss";
 
@@ -15,11 +15,11 @@ export function QuoteSection({ invitation }: Props) {
   return (
     <SectionSpacing id="quote">
       <div className={styles.quote}>
-        <AnimatedReveal>
-          <p className={styles.quoteText}>&ldquo;{q.text}&rdquo;</p>
-        </AnimatedReveal>
+        <p className={styles.quoteText}>
+          <SplitText text={`\u201C${q.text}\u201D`} by="word" stagger={0.05} />
+        </p>
         {q.attribution && (
-          <AnimatedReveal delay={0.15}>
+          <AnimatedReveal variant="drift" delay={0.15}>
             <p className={styles.quoteAttrib}>&mdash; {q.attribution}</p>
           </AnimatedReveal>
         )}

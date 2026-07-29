@@ -1,14 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   SectionSpacing,
   SectionTitle,
   AnimatedReveal,
   Divider,
 } from "../core";
-import { useStagger } from "../hooks";
+import { useReducedMotion, useStagger } from "../hooks";
 import type { Invitation } from "../types";
 import styles from "./sections.module.scss";
 
@@ -32,7 +32,8 @@ const EMPTY = { days: 0, hours: 0, minutes: 0, seconds: 0 };
 export function CountdownSection({ invitation }: Props) {
   // Start empty so SSR and first client paint match; tick after mount.
   const [units, setUnits] = useState(EMPTY);
-  const { container, item } = useStagger({ stagger: 0.12 });
+  const reduced = useReducedMotion();
+  const { container, item } = useStagger({ variant: "tilt", stagger: 0.12 });
 
   useEffect(() => {
     const initialTick = window.setTimeout(
@@ -67,7 +68,20 @@ export function CountdownSection({ invitation }: Props) {
         >
           {(["days", "hours", "minutes", "seconds"] as const).map((key) => (
             <motion.div key={key} className={styles.countdownUnit} variants={item}>
-              <span className={styles.countdownNumber}>{units[key]}</span>
+              <span className={styles.countdownRoll}>
+                <AnimatePresence initial={false} mode="popLayout">
+                  <motion.span
+                    key={units[key]}
+                    className={styles.countdownNumber}
+                    initial={reduced ? { opacity: 0 } : { y: "70%", opacity: 0 }}
+                    animate={{ y: "0%", opacity: 1 }}
+                    exit={reduced ? { opacity: 0 } : { y: "-70%", opacity: 0 }}
+                    transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+                  >
+                    {units[key]}
+                  </motion.span>
+                </AnimatePresence>
+              </span>
               <span className={styles.countdownLabel}>{key}</span>
             </motion.div>
           ))}

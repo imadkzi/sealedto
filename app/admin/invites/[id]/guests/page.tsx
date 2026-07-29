@@ -104,7 +104,7 @@ export default async function GuestsPage({
 
   return (
     <div className={styles.shell}>
-      <div className={styles.wrap}>
+      <div className={`${styles.wrap} ${styles.wrapWide}`}>
         <header className={styles.header}>
           <Link href={`/admin/invites/${invite.id}`} className={styles.brand}>
             ← Invite
@@ -137,8 +137,8 @@ export default async function GuestsPage({
           </div>
         </div>
 
-        <div className={styles.detailLayout}>
-          <div className={styles.stack}>
+        <div className={styles.guestLayout}>
+          <div className={styles.guestTools}>
             <form action={addGuest} className={styles.form}>
               <h2 className={styles.inviteTitle}>Add curated guest</h2>
               <p className={styles.muted}>

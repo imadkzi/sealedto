@@ -36,16 +36,16 @@ export function VenueSection({ invitation }: Props) {
       <div className={styles.venue}>
         <SectionTitle>The Venue</SectionTitle>
         <Divider variant="ornament" />
-        <AnimatedReveal delay={0.1}>
+        <AnimatedReveal variant="mask" delay={0.1}>
           <h3 className={styles.venueName}>{venue.name}</h3>
         </AnimatedReveal>
         {venue.address && (
-          <AnimatedReveal delay={0.2}>
+          <AnimatedReveal variant="mask" delay={0.2}>
             <p className={styles.venueAddress}>{venue.address}</p>
           </AnimatedReveal>
         )}
         {staticMapUrl ? (
-          <AnimatedReveal delay={0.25}>
+          <AnimatedReveal variant="scale" delay={0.25}>
             <a
               href={mapLinks[0].href}
               target="_blank"
@@ -61,7 +61,7 @@ export function VenueSection({ invitation }: Props) {
             </a>
           </AnimatedReveal>
         ) : null}
-        <AnimatedReveal delay={0.3}>
+        <AnimatedReveal variant="tilt" delay={0.3}>
           <div className={styles.venueMapActions} aria-label="Open venue in maps">
             {mapLinks.map((map) => (
               <a

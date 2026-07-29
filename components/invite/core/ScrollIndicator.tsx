@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useMotionValue, useTransform } from "framer-motion";
+import { motion, useTransform } from "framer-motion";
 import { useScrollProgress } from "../hooks";
 
 export function ScrollIndicator() {

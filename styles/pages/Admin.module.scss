@@ -331,6 +331,29 @@
   }
 }
 
+.guestLayout {
+  display: grid;
+  gap: 1rem;
+}
+
+.guestTools {
+  display: grid;
+  gap: 1rem;
+  align-items: start;
+}
+
+/* Cards fill their column — the shared .form width cap would shrink them. */
+.guestTools > * {
+  width: 100%;
+  max-width: none;
+}
+
+@media (min-width: 820px) {
+  .guestTools {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 .tableWrap {
   width: 100%;
   overflow-x: auto;
@@ -341,8 +364,13 @@
 
 .table {
   width: 100%;
-  min-width: 36rem;
+  min-width: 34rem;
   border-collapse: collapse;
+}
+
+.table td:last-child,
+.table th:last-child {
+  white-space: nowrap;
 }
 
 .table th,

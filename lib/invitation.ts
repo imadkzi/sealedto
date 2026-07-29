@@ -41,8 +41,6 @@ export function toInvitation(invite: Invite, guest?: Guest | null): Invitation {
     groom: { name: invite.partner_two },
 
     weddingDate: invite.event_at instanceof Date ? invite.event_at : new Date(invite.event_at),
-    ceremonyTime: invite.ceremony_time ?? undefined,
-    receptionTime: invite.reception_time ?? undefined,
 
     venue: {
       name: invite.venue_name,

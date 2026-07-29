@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatedReveal, ParallaxContainer, ScrollCue } from "../core";
+import { AnimatedReveal, ParallaxContainer, ScrollCue, SplitText } from "../core";
 import type { Invitation } from "../types";
 import { MediaPlaceholder } from "./MediaPlaceholder";
 import styles from "./sections.module.scss";
@@ -58,15 +58,19 @@ export function HeroSection({ invitation, layout = "default" }: Props) {
       ) : null}
 
       <div className={styles.heroText}>
-        <AnimatedReveal>
-          <p className={styles.heroEyebrow}>{eyebrow}</p>
+        <AnimatedReveal variant="mask">
+          <p className={guestName ? styles.heroGreeting : styles.heroEyebrow}>
+            {eyebrow}
+          </p>
         </AnimatedReveal>
-        <AnimatedReveal delay={0.15}>
-          <h1 className={styles.heroNames}>
-            {coupleDisplayName ?? `${bride.name} & ${groom.name}`}
-          </h1>
-        </AnimatedReveal>
-        <AnimatedReveal delay={0.3}>
+        <h1 className={styles.heroNames}>
+          <SplitText
+            text={coupleDisplayName ?? `${bride.name} & ${groom.name}`}
+            by="char"
+            delay={0.15}
+          />
+        </h1>
+        <AnimatedReveal variant="drift" delay={0.3}>
           <div className={styles.heroDetails}>
             <p>{dateStr}</p>
             <p>{venue.name}</p>

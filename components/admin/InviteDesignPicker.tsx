@@ -7,16 +7,8 @@ import "@/components/invite/templates/editorial";
 
 import {
   getTemplate,
-  resolveColourTheme,
   FALLBACK_TEMPLATE_ID,
 } from "@/components/invite/registry";
-import { InviteThemeProvider } from "@/components/invite/theme/InviteThemeProvider";
-import type {
-  InviteTheme,
-  EditorialVariantId,
-  TemplateDefinition,
-} from "@/components/invite/types";
-
 import styles from "./InviteDesignPicker.module.scss";
 
 interface Props {

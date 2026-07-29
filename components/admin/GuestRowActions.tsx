@@ -72,14 +72,6 @@ export function GuestRowActions({ guest, updateAction, deleteAction }: Props) {
       <td>
         {guest.is_curated && guest.personalUrl ? (
           <div className={guestStyles.linkCell}>
-            <a
-              className={styles.publicLink}
-              href={guest.personalUrl}
-              target="_blank"
-              rel="noreferrer"
-            >
-              Open
-            </a>
             <button
               type="button"
               className={styles.ghost}

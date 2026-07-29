@@ -94,19 +94,34 @@ export const mocha = theme("mocha", "Mocha", {
   hover: "rgba(139, 111, 78, 0.10)",
 });
 
-export const black = theme("black", "Black", {
-  background: "#0A0A0A",
-  surface: "#171717",
-  ink: "#EDEBE8",
-  muted: "#A09E98",
-  accent: "#D4C5A9",
-  buttonBg: "#D4C5A9",
-  buttonText: "#0A0A0A",
-  border: "rgba(237, 235, 232, 0.12)",
-  line: "rgba(237, 235, 232, 0.08)",
-  decor: "#D4C5A9",
-  overlay: "rgba(10, 10, 10, 0.90)",
-  hover: "rgba(212, 197, 169, 0.12)",
+export const lilac = theme("lilac", "Lilac", {
+  background: "#F4F0FA",
+  surface: "#FFFFFF",
+  ink: "#2E2440",
+  muted: "#786C90",
+  accent: "#8367B5",
+  buttonBg: "#8367B5",
+  buttonText: "#FFFFFF",
+  border: "rgba(46, 36, 64, 0.10)",
+  line: "rgba(46, 36, 64, 0.08)",
+  decor: "#8367B5",
+  overlay: "rgba(244, 240, 250, 0.85)",
+  hover: "rgba(131, 103, 181, 0.10)",
+});
+
+export const crimson = theme("crimson", "Crimson & Gold", {
+  background: "#450C13",
+  surface: "#5C161E",
+  ink: "#F7ECD9",
+  muted: "#CDA894",
+  accent: "#D6AF5C",
+  buttonBg: "#D6AF5C",
+  buttonText: "#3A0A10",
+  border: "rgba(247, 236, 217, 0.14)",
+  line: "rgba(247, 236, 217, 0.10)",
+  decor: "#D6AF5C",
+  overlay: "rgba(69, 12, 19, 0.90)",
+  hover: "rgba(214, 175, 92, 0.14)",
 });
 
 export const editorialColourThemes: ColourThemeDefinition[] = [
@@ -116,5 +131,6 @@ export const editorialColourThemes: ColourThemeDefinition[] = [
   blush,
   navy,
   mocha,
-  black,
+  lilac,
+  crimson,
 ];

@@ -123,7 +123,7 @@ export function IntroOverlay({
           {initials}
         </div>
         <div ref={lineRef} className={styles.line} />
-        <p ref={line1Ref} className={styles.copy}>
+        <p ref={line1Ref} className={guestName ? styles.greeting : styles.copy}>
           {guestName ? `${guestName}, you are invited` : introLine}
         </p>
         <h2 ref={namesRef} className={styles.names}>

@@ -1,4 +1,4 @@
-import type { TemplateDefinition, ColourThemeDefinition, VariantDefinition, EditorialVariantId } from "./types";
+import type { TemplateDefinition, ColourThemeDefinition, VariantDefinition } from "./types";
 
 const templates = new Map<string, TemplateDefinition>();
 

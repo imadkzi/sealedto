@@ -79,8 +79,6 @@ export interface Invitation {
   coupleDisplayName?: string;
 
   weddingDate: Date;
-  ceremonyTime?: string;
-  receptionTime?: string;
 
   venue: InvitationVenue;
 

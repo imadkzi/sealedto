@@ -37,7 +37,7 @@ export function RSVPSection({ rsvp, invitation }: Props) {
         ) : null}
 
         {rsvp.done ? (
-          <AnimatedReveal>
+          <AnimatedReveal variant="tilt">
             <div className={styles.rsvpThanks}>
               {rsvp.isCurated && rsvp.guestName
                 ? `Thank you, ${rsvp.guestName} — your RSVP is sealed.`
@@ -45,7 +45,7 @@ export function RSVPSection({ rsvp, invitation }: Props) {
             </div>
           </AnimatedReveal>
         ) : (
-          <AnimatedReveal>
+          <AnimatedReveal variant="mask">
             <form className={styles.rsvpForm} onSubmit={rsvp.onSubmit}>
               {rsvp.mode === "public" && (
                 <label className={styles.rsvpLabel}>

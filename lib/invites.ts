@@ -104,8 +104,6 @@ export type CreateInviteInput = {
   variantId?: string;
   colourThemeId?: string;
   introLine?: string;
-  ceremonyTime?: string;
-  receptionTime?: string;
   inviteMode?: "wedding" | "save_the_date";
   scheduleItems?: Array<{
     time: string;
@@ -152,8 +150,8 @@ export async function createInvite(input: CreateInviteInput) {
       input.message || null,
       accent,
       normalizeIntroLine(input.introLine),
-      input.ceremonyTime || null,
-      input.receptionTime || null,
+      null,
+      null,
       input.inviteMode ?? "wedding",
       input.scheduleItems?.length ? JSON.stringify(input.scheduleItems) : null,
       input.dressCode || null,
@@ -181,8 +179,6 @@ export type UpdateInviteInput = {
   variantId?: string;
   colourThemeId?: string;
   introLine?: string;
-  ceremonyTime?: string | null;
-  receptionTime?: string | null;
   inviteMode?: "wedding" | "save_the_date";
   scheduleItems?: Array<{
     time: string;
@@ -251,12 +247,8 @@ export async function updateInvite(
       input.introLine === undefined
         ? current.intro_line
         : normalizeIntroLine(input.introLine),
-      input.ceremonyTime === undefined
-        ? current.ceremony_time
-        : input.ceremonyTime || null,
-      input.receptionTime === undefined
-        ? current.reception_time
-        : input.receptionTime || null,
+      current.ceremony_time,
+      current.reception_time,
       input.inviteMode ?? current.invite_mode,
       input.scheduleItems === undefined
         ? current.schedule_items

@@ -1,9 +1,9 @@
 export { AnimatedReveal } from "./AnimatedReveal";
-export { FadeIn } from "./FadeIn";
 export { ParallaxContainer } from "./ParallaxContainer";
 export { PageWrapper } from "./PageWrapper";
 export { SectionSpacing } from "./SectionSpacing";
 export { SectionTitle } from "./SectionTitle";
+export { SplitText } from "./SplitText";
 export { Divider } from "./Divider";
 export { ScrollIndicator } from "./ScrollIndicator";
 export { ScrollCue } from "./ScrollCue";

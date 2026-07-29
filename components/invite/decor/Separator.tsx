@@ -1,7 +1,8 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { useReveal } from "../hooks";
+import { useRef } from "react";
+import { motion, useInView, type Variants } from "framer-motion";
+import { useReducedMotion } from "../hooks";
 import styles from "./decor.module.scss";
 
 export type SeparatorVariant =
@@ -18,58 +19,83 @@ interface Props {
   className?: string;
 }
 
+/** Strokes ink themselves in; dots and glyphs pop after the rules land. */
+const draw: Variants = {
+  hidden: { pathLength: 0, opacity: 0 },
+  visible: {
+    pathLength: 1,
+    opacity: 1,
+    transition: {
+      pathLength: { duration: 0.8, ease: [0.16, 1, 0.3, 1] },
+      opacity: { duration: 0.25 },
+    },
+  },
+};
+
+const pop: Variants = {
+  hidden: { scale: 0, opacity: 0 },
+  visible: {
+    scale: 1,
+    opacity: 1,
+    transition: { duration: 0.45, ease: [0.34, 1.4, 0.64, 1] },
+  },
+};
+
 const glyphs: Record<SeparatorVariant, React.ReactNode> = {
-  line: <path d="M0 8 H120" />,
+  line: <motion.path d="M0 8 H120" variants={draw} />,
 
   diamond: (
     <>
-      <path d="M0 8 H50" />
-      <path d="M60 3 L65 8 L60 13 L55 8 Z" />
-      <path d="M70 8 H120" />
+      <motion.path d="M0 8 H50" variants={draw} />
+      <motion.path d="M60 3 L65 8 L60 13 L55 8 Z" variants={pop} />
+      <motion.path d="M70 8 H120" variants={draw} />
     </>
   ),
 
   dots: (
     <>
-      <path d="M0 8 H46" />
-      <circle cx="54" cy="8" r="1.4" />
-      <circle cx="60" cy="8" r="1.4" />
-      <circle cx="66" cy="8" r="1.4" />
-      <path d="M74 8 H120" />
+      <motion.path d="M0 8 H46" variants={draw} />
+      <motion.circle cx="54" cy="8" r="1.4" variants={pop} />
+      <motion.circle cx="60" cy="8" r="1.4" variants={pop} />
+      <motion.circle cx="66" cy="8" r="1.4" variants={pop} />
+      <motion.path d="M74 8 H120" variants={draw} />
     </>
   ),
 
   leaf: (
     <>
-      <path d="M0 8 H48" />
-      <path d="M60 2 C 66 5, 66 11, 60 14 C 54 11, 54 5, 60 2 Z" />
-      <path d="M60 2 V14" />
-      <path d="M72 8 H120" />
+      <motion.path d="M0 8 H48" variants={draw} />
+      <motion.path
+        d="M60 2 C 66 5, 66 11, 60 14 C 54 11, 54 5, 60 2 Z"
+        variants={draw}
+      />
+      <motion.path d="M60 2 V14" variants={draw} />
+      <motion.path d="M72 8 H120" variants={draw} />
     </>
   ),
 
-  wave: <path d="M0 8 Q 15 1, 30 8 T 60 8 T 90 8 T 120 8" />,
+  wave: (
+    <motion.path d="M0 8 Q 15 1, 30 8 T 60 8 T 90 8 T 120 8" variants={draw} />
+  ),
 
   ornament: (
     <>
-      <path d="M0 8 H40" />
-      <path d="M40 8 Q 50 0, 60 8 Q 70 16, 80 8" />
-      <path d="M80 8 H120" />
-      <circle cx="60" cy="8" r="1.2" />
+      <motion.path d="M0 8 H40" variants={draw} />
+      <motion.path d="M40 8 Q 50 0, 60 8 Q 70 16, 80 8" variants={draw} />
+      <motion.path d="M80 8 H120" variants={draw} />
+      <motion.circle cx="60" cy="8" r="1.2" variants={pop} />
     </>
   ),
 };
 
 export function Separator({ variant = "line", width = 120, className }: Props) {
-  const { ref, ...motionProps } = useReveal({ y: 8, blur: 0, duration: 0.7 });
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: "-60px 0px" });
+  const reduced = useReducedMotion();
 
   return (
-    <motion.div
-      ref={ref}
-      className={`${styles.separator} ${className ?? ""}`}
-      {...motionProps}
-    >
-      <svg
+    <div ref={ref} className={`${styles.separator} ${className ?? ""}`}>
+      <motion.svg
         width={width}
         height="16"
         viewBox="0 0 120 16"
@@ -78,9 +104,15 @@ export function Separator({ variant = "line", width = 120, className }: Props) {
         strokeWidth="0.8"
         strokeLinecap="round"
         aria-hidden
+        initial={reduced ? "visible" : "hidden"}
+        animate={reduced || inView ? "visible" : "hidden"}
+        variants={{
+          hidden: {},
+          visible: { transition: { staggerChildren: 0.08 } },
+        }}
       >
         {glyphs[variant]}
-      </svg>
-    </motion.div>
+      </motion.svg>
+    </div>
   );
 }

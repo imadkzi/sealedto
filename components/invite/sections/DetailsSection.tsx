@@ -25,7 +25,7 @@ export function DetailsSection({ invitation }: Props) {
         <Divider variant="line" />
         <div className={styles.detailsGrid}>
           {invitation.dressCode ? (
-            <AnimatedReveal>
+            <AnimatedReveal variant="unfold">
               <div className={styles.detailItem}>
                 <p className={styles.detailLabel}>Dress code</p>
                 <p className={styles.detailBody}>{invitation.dressCode}</p>
@@ -33,7 +33,7 @@ export function DetailsSection({ invitation }: Props) {
             </AnimatedReveal>
           ) : null}
           {invitation.accommodationNote ? (
-            <AnimatedReveal delay={0.1}>
+            <AnimatedReveal variant="unfold" delay={0.1}>
               <div className={styles.detailItem}>
                 <p className={styles.detailLabel}>Accommodation</p>
                 <p className={styles.detailBody}>
@@ -43,7 +43,7 @@ export function DetailsSection({ invitation }: Props) {
             </AnimatedReveal>
           ) : null}
           {invitation.registryUrl ? (
-            <AnimatedReveal delay={0.15}>
+            <AnimatedReveal variant="unfold" delay={0.15}>
               <div className={styles.detailItem}>
                 <p className={styles.detailLabel}>Gift registry</p>
                 <a

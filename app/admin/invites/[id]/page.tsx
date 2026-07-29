@@ -123,8 +123,6 @@ export default async function InviteAdminPage({
       venueAddress: String(formData.get("venueAddress") ?? "").trim(),
       message: String(formData.get("message") ?? "").trim(),
       introLine: String(formData.get("introLine") ?? "").trim(),
-      ceremonyTime: String(formData.get("ceremonyTime") ?? "").trim() || null,
-      receptionTime: String(formData.get("receptionTime") ?? "").trim() || null,
       inviteMode,
       scheduleItems,
       venueLat: venueLatRaw ? Number(venueLatRaw) : null,
@@ -167,8 +165,6 @@ export default async function InviteAdminPage({
     venueAddress: invite.venue_address ?? "",
     message: invite.message ?? "",
     introLine: invite.intro_line || DEFAULT_INTRO_LINE,
-    ceremonyTime: invite.ceremony_time ?? "",
-    receptionTime: invite.reception_time ?? "",
     inviteMode: invite.invite_mode ?? "wedding",
     scheduleItems:
       invite.schedule_items ??

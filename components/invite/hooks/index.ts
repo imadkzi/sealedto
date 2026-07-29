@@ -1,5 +1,5 @@
 export { useReducedMotion } from "./useReducedMotion";
-export { useReveal } from "./useReveal";
+export { useReveal, revealVariants, type RevealVariant } from "./useReveal";
 export { useParallax } from "./useParallax";
 export { useStagger } from "./useStagger";
 export { usePageIntro } from "./usePageIntro";

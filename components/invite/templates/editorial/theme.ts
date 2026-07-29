@@ -1,7 +1,7 @@
 import type { InvitationFonts, VariantDefinition, EditorialVariantId } from "../../types";
 
 export const editorialFonts: InvitationFonts = {
-  display: "var(--font-editorial)",
+  display: "var(--font-display)",
   body: "var(--font-editorial)",
 };
 
