@@ -1,16 +1,16 @@
 @use "tokens" as *;
 
 :root {
-  --bg: #f6f3ee;
-  --paper: #fffdf8;
+  --bg: #faf6f1;
+  --paper: #fffdf9;
   --surface: #ffffff;
-  --ink: #1c1714;
-  --muted: #6b635c;
-  --border: rgba(28, 23, 20, 0.12);
-  --seal: #7a2e3a;
-  --seal-soft: #f3e4e7;
-  --gold: #9a7b45;
-  --shadow: 0 22px 60px rgba(28, 23, 20, 0.1);
+  --ink: #1f1416;
+  --muted: #6e5f62;
+  --border: rgba(92, 26, 36, 0.12);
+  --seal: #5c1a24;
+  --seal-soft: #f5e9eb;
+  --gold: #a4845a;
+  --shadow: 0 22px 60px rgba(31, 20, 22, 0.1);
 }
 
 *,
@@ -26,13 +26,14 @@ body {
   min-height: 100%;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   font-family: $font-body;
   color: $color-ink;
-  background:
-    radial-gradient(1200px 600px at 10% -10%, rgba(122, 46, 58, 0.08), transparent 55%),
-    radial-gradient(900px 500px at 90% 0%, rgba(154, 123, 69, 0.1), transparent 50%),
-    linear-gradient(180deg, #f8f5f0 0%, $color-bg 40%, #efe8df 100%);
+  background: $color-bg;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }

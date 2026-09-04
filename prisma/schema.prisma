@@ -1,0 +1,93 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum InviteMode {
+  wedding
+  save_the_date
+}
+
+enum RsvpStatus {
+  pending
+  yes
+  no
+  maybe
+}
+
+model User {
+  id           String   @id @default(uuid()) @db.Uuid
+  email        String   @unique
+  name         String?
+  passwordHash String   @map("password_hash")
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  invites      Invite[]
+
+  @@map("users")
+}
+
+model AuthRateLimit {
+  key             String   @id
+  count           Int      @default(0)
+  windowStartedAt DateTime @default(now()) @map("window_started_at") @db.Timestamptz(6)
+
+  @@map("auth_rate_limits")
+}
+
+model Invite {
+  id                String     @id @default(uuid()) @db.Uuid
+  userId            String     @map("user_id") @db.Uuid
+  user              User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  slug              String     @unique
+  templateId        String     @default("default") @map("template_id")
+  partnerOne        String     @map("partner_one")
+  partnerTwo        String     @map("partner_two")
+  eventAt           DateTime   @map("event_at") @db.Timestamptz(6)
+  venueName         String     @map("venue_name")
+  venueAddress      String?    @map("venue_address")
+  message           String?
+  accentColor       String     @default("#7a2e3a") @map("accent_color")
+  published         Boolean    @default(false)
+  createdAt         DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime   @updatedAt @map("updated_at") @db.Timestamptz(6)
+  variantId         String     @default("classic") @map("variant_id")
+  colourThemeId     String     @default("ivory") @map("colour_theme_id")
+  heroImage         String?    @map("hero_image")
+  galleryImages     Json?      @map("gallery_images")
+  introLine         String     @default("Together with their families") @map("intro_line")
+  ceremonyTime      String?    @map("ceremony_time")
+  receptionTime     String?    @map("reception_time")
+  dressCode         String?    @map("dress_code")
+  registryUrl       String?    @map("registry_url")
+  accommodationNote String?    @map("accommodation_note")
+  rsvpDeadline      DateTime?  @map("rsvp_deadline") @db.Timestamptz(6)
+  inviteMode        InviteMode @default(wedding) @map("invite_mode")
+  scheduleItems     Json?      @map("schedule_items")
+  venueLat          Float?     @map("venue_lat")
+  venueLng          Float?     @map("venue_lng")
+  guests            Guest[]
+
+  @@index([userId])
+  @@map("invites")
+}
+
+model Guest {
+  id          String     @id @default(uuid()) @db.Uuid
+  inviteId    String     @map("invite_id") @db.Uuid
+  invite      Invite     @relation(fields: [inviteId], references: [id], onDelete: Cascade)
+  displayName String     @map("display_name")
+  token       String     @unique
+  isCurated   Boolean    @default(false) @map("is_curated")
+  rsvpStatus  RsvpStatus @default(pending) @map("rsvp_status")
+  partySize   Int        @default(1) @map("party_size")
+  rsvpNote    String?    @map("rsvp_note")
+  rsvpAt      DateTime?  @map("rsvp_at") @db.Timestamptz(6)
+  createdAt   DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@index([inviteId])
+  @@map("guests")
+}

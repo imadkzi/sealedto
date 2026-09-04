@@ -1,4 +1,8 @@
-import { query } from "./db/postgres";
+import { prisma } from "./db/prisma";
+import {
+  Prisma,
+  type Guest as GuestRecord,
+} from "@/lib/generated/prisma/client";
 import { makeGuestToken } from "./ids";
 
 export type RsvpStatus = "pending" | "yes" | "no" | "maybe";
@@ -16,53 +20,56 @@ export type Guest = {
   created_at: Date;
 };
 
-type GuestRow = Omit<Guest, "rsvp_status"> & { rsvp_status: string };
+const RSVP_ORDER: Record<RsvpStatus, number> = {
+  yes: 0,
+  maybe: 1,
+  no: 2,
+  pending: 3,
+};
 
-function mapGuest(row: GuestRow): Guest {
-  const status = (["pending", "yes", "no", "maybe"] as const).includes(
-    row.rsvp_status as RsvpStatus,
-  )
-    ? (row.rsvp_status as RsvpStatus)
-    : "pending";
-  return { ...row, rsvp_status: status };
+function mapGuest(row: GuestRecord): Guest {
+  return {
+    id: row.id,
+    invite_id: row.inviteId,
+    display_name: row.displayName,
+    token: row.token,
+    is_curated: row.isCurated,
+    rsvp_status: row.rsvpStatus,
+    party_size: row.partySize,
+    rsvp_note: row.rsvpNote,
+    rsvp_at: row.rsvpAt,
+    created_at: row.createdAt,
+  };
 }
 
 export async function listGuestsForInvite(inviteId: string) {
-  const rows = await query<GuestRow>(
-    `select id::text as id, invite_id::text as invite_id, display_name, token,
-            is_curated, rsvp_status, party_size, rsvp_note, rsvp_at, created_at
-     from guests
-     where invite_id = $1
-     order by
-       case rsvp_status when 'yes' then 0 when 'maybe' then 1 when 'no' then 2 else 3 end,
-       display_name asc`,
-    [inviteId],
-  );
-  return rows.map(mapGuest);
+  const rows = await prisma.guest.findMany({
+    where: { inviteId },
+  });
+  return rows
+    .map(mapGuest)
+    .sort(
+      (a, b) =>
+        RSVP_ORDER[a.rsvp_status] - RSVP_ORDER[b.rsvp_status] ||
+        a.display_name.localeCompare(b.display_name),
+    );
 }
 
 export async function getGuestByToken(token: string) {
-  const rows = await query<GuestRow>(
-    `select id::text as id, invite_id::text as invite_id, display_name, token,
-            is_curated, rsvp_status, party_size, rsvp_note, rsvp_at, created_at
-     from guests
-     where token = $1
-     limit 1`,
-    [token],
-  );
-  return rows[0] ? mapGuest(rows[0]) : null;
+  const row = await prisma.guest.findUnique({ where: { token } });
+  return row ? mapGuest(row) : null;
 }
 
 export async function createCuratedGuest(inviteId: string, displayName: string) {
-  const token = makeGuestToken();
-  const rows = await query<GuestRow>(
-    `insert into guests (invite_id, display_name, token, is_curated)
-     values ($1, $2, $3, true)
-     returning id::text as id, invite_id::text as invite_id, display_name, token,
-               is_curated, rsvp_status, party_size, rsvp_note, rsvp_at, created_at`,
-    [inviteId, displayName, token],
-  );
-  return mapGuest(rows[0]);
+  const row = await prisma.guest.create({
+    data: {
+      inviteId,
+      displayName,
+      token: makeGuestToken(),
+      isCurated: true,
+    },
+  });
+  return mapGuest(row);
 }
 
 /** Create many curated guests (e.g. CSV import). Skips blank names. */
@@ -70,25 +77,25 @@ export async function createCuratedGuestsBulk(
   inviteId: string,
   displayNames: string[],
 ) {
-  const created: Guest[] = [];
-  for (const raw of displayNames) {
-    const displayName = raw.trim();
-    if (!displayName) continue;
-    created.push(await createCuratedGuest(inviteId, displayName));
-  }
-  return created;
+  const names = displayNames.map((name) => name.trim()).filter(Boolean);
+  if (!names.length) return [];
+
+  const rows = await prisma.guest.createManyAndReturn({
+    data: names.map((displayName) => ({
+      inviteId,
+      displayName,
+      token: makeGuestToken(),
+      isCurated: true,
+    })),
+  });
+  return rows.map(mapGuest);
 }
 
 export async function getGuestByIdForInvite(guestId: string, inviteId: string) {
-  const rows = await query<GuestRow>(
-    `select id::text as id, invite_id::text as invite_id, display_name, token,
-            is_curated, rsvp_status, party_size, rsvp_note, rsvp_at, created_at
-     from guests
-     where id = $1 and invite_id = $2
-     limit 1`,
-    [guestId, inviteId],
-  );
-  return rows[0] ? mapGuest(rows[0]) : null;
+  const row = await prisma.guest.findFirst({
+    where: { id: guestId, inviteId },
+  });
+  return row ? mapGuest(row) : null;
 }
 
 export async function updateCuratedGuest(
@@ -96,24 +103,24 @@ export async function updateCuratedGuest(
   inviteId: string,
   displayName: string,
 ) {
-  const rows = await query<GuestRow>(
-    `update guests set display_name = $3
-     where id = $1 and invite_id = $2 and is_curated = true
-     returning id::text as id, invite_id::text as invite_id, display_name, token,
-               is_curated, rsvp_status, party_size, rsvp_note, rsvp_at, created_at`,
-    [guestId, inviteId, displayName],
-  );
-  return rows[0] ? mapGuest(rows[0]) : null;
+  const current = await prisma.guest.findFirst({
+    where: { id: guestId, inviteId, isCurated: true },
+    select: { id: true },
+  });
+  if (!current) return null;
+
+  const row = await prisma.guest.update({
+    where: { id: guestId },
+    data: { displayName },
+  });
+  return mapGuest(row);
 }
 
 export async function deleteGuest(guestId: string, inviteId: string) {
-  const rows = await query<{ id: string }>(
-    `delete from guests
-     where id = $1 and invite_id = $2
-     returning id::text as id`,
-    [guestId, inviteId],
-  );
-  return Boolean(rows[0]);
+  const result = await prisma.guest.deleteMany({
+    where: { id: guestId, inviteId },
+  });
+  return result.count > 0;
 }
 
 export async function submitPublicRsvp(input: {
@@ -123,23 +130,19 @@ export async function submitPublicRsvp(input: {
   partySize: number;
   note?: string;
 }) {
-  const token = makeGuestToken();
-  const rows = await query<GuestRow>(
-    `insert into guests (
-       invite_id, display_name, token, is_curated, rsvp_status, party_size, rsvp_note, rsvp_at
-     ) values ($1, $2, $3, false, $4, $5, $6, now())
-     returning id::text as id, invite_id::text as invite_id, display_name, token,
-               is_curated, rsvp_status, party_size, rsvp_note, rsvp_at, created_at`,
-    [
-      input.inviteId,
-      input.displayName,
-      token,
-      input.status,
-      input.partySize,
-      input.note || null,
-    ],
-  );
-  return mapGuest(rows[0]);
+  const row = await prisma.guest.create({
+    data: {
+      inviteId: input.inviteId,
+      displayName: input.displayName,
+      token: makeGuestToken(),
+      isCurated: false,
+      rsvpStatus: input.status,
+      partySize: input.partySize,
+      rsvpNote: input.note || null,
+      rsvpAt: new Date(),
+    },
+  });
+  return mapGuest(row);
 }
 
 export async function submitCuratedRsvp(input: {
@@ -149,40 +152,38 @@ export async function submitCuratedRsvp(input: {
   note?: string;
   displayName?: string;
 }) {
-  const rows = await query<GuestRow>(
-    `update guests set
-       rsvp_status = $2,
-       party_size = $3,
-       rsvp_note = $4,
-       display_name = coalesce($5, display_name),
-       rsvp_at = now()
-     where id = $1
-     returning id::text as id, invite_id::text as invite_id, display_name, token,
-               is_curated, rsvp_status, party_size, rsvp_note, rsvp_at, created_at`,
-    [
-      input.guestId,
-      input.status,
-      input.partySize,
-      input.note || null,
-      input.displayName || null,
-    ],
-  );
-  return rows[0] ? mapGuest(rows[0]) : null;
+  try {
+    const row = await prisma.guest.update({
+      where: { id: input.guestId },
+      data: {
+        rsvpStatus: input.status,
+        partySize: input.partySize,
+        rsvpNote: input.note || null,
+        displayName: input.displayName || undefined,
+        rsvpAt: new Date(),
+      },
+    });
+    return mapGuest(row);
+  } catch (error) {
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === "P2025"
+    ) {
+      return null;
+    }
+    throw error;
+  }
 }
 
 export async function rsvpCounts(inviteId: string) {
-  const rows = await query<{ rsvp_status: string; count: string }>(
-    `select rsvp_status, count(*)::text as count
-     from guests
-     where invite_id = $1
-     group by rsvp_status`,
-    [inviteId],
-  );
+  const rows = await prisma.guest.groupBy({
+    by: ["rsvpStatus"],
+    where: { inviteId },
+    _count: { _all: true },
+  });
   const counts = { pending: 0, yes: 0, no: 0, maybe: 0 };
   for (const row of rows) {
-    if (row.rsvp_status in counts) {
-      counts[row.rsvp_status as keyof typeof counts] = Number(row.count);
-    }
+    counts[row.rsvpStatus] = row._count._all;
   }
   return counts;
 }

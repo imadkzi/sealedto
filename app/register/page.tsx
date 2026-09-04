@@ -3,7 +3,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import bcrypt from "bcryptjs";
 import { AuthError } from "next-auth";
-import { query } from "@/lib/db/postgres";
+import { prisma } from "@/lib/db/prisma";
 import { signIn } from "@/lib/auth";
 import { getSessionUser } from "@/lib/session";
 import { hitRateLimit } from "@/lib/security/rate-limit";
@@ -46,17 +46,16 @@ export default async function RegisterPage({
       redirect("/register?error=invalid");
     }
 
-    const existing = await query<{ id: string }>(
-      `select id::text as id from users where email = $1 limit 1`,
-      [email],
-    );
-    if (existing[0]) redirect("/register?error=exists");
+    const existing = await prisma.user.findUnique({
+      where: { email },
+      select: { id: true },
+    });
+    if (existing) redirect("/register?error=exists");
 
     const passwordHash = await bcrypt.hash(password, 12);
-    await query(
-      `insert into users (email, name, password_hash) values ($1, $2, $3)`,
-      [email, name || null, passwordHash],
-    );
+    await prisma.user.create({
+      data: { email, name: name || null, passwordHash },
+    });
 
     try {
       await signIn("credentials", {

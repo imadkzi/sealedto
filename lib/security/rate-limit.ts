@@ -1,4 +1,5 @@
-import { query } from "../db/postgres";
+import { Prisma } from "@/lib/generated/prisma/client";
+import { prisma } from "../db/prisma";
 
 type RateLimitOptions = {
   key: string;
@@ -11,31 +12,39 @@ export async function hitRateLimit({
   limit,
   windowMs,
 }: RateLimitOptions): Promise<boolean> {
-  let rows: { count: number }[] = [];
   try {
-    rows = await query<{ count: number }>(
-      `insert into auth_rate_limits (key, count, window_started_at)
-       values ($1, 1, now())
-       on conflict (key) do update
-         set count = case
-               when auth_rate_limits.window_started_at < now() - ($2::int * interval '1 millisecond')
-                 then 1
-               else auth_rate_limits.count + 1
-             end,
-             window_started_at = case
-               when auth_rate_limits.window_started_at < now() - ($2::int * interval '1 millisecond')
-                 then now()
-               else auth_rate_limits.window_started_at
-             end
-       returning count`,
-      [key, windowMs],
-    );
+    const now = new Date();
+    const row = await prisma.$transaction(async (tx) => {
+      const existing = await tx.authRateLimit.findUnique({ where: { key } });
+      if (!existing) {
+        return tx.authRateLimit.create({
+          data: { key, count: 1, windowStartedAt: now },
+        });
+      }
+
+      const expired =
+        existing.windowStartedAt.getTime() < now.getTime() - windowMs;
+      if (expired) {
+        return tx.authRateLimit.update({
+          where: { key },
+          data: { count: 1, windowStartedAt: now },
+        });
+      }
+
+      return tx.authRateLimit.update({
+        where: { key },
+        data: { count: { increment: 1 } },
+      });
+    });
+
+    return row.count > limit;
   } catch (error) {
-    const code = (error as { code?: string } | null)?.code;
-    if (code === "42P01") return false;
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === "P2021"
+    ) {
+      return false;
+    }
     throw error;
   }
-
-  const count = rows[0]?.count ?? 1;
-  return count > limit;
 }

@@ -1,4 +1,8 @@
-import { query } from "./db/postgres";
+import { prisma } from "./db/prisma";
+import {
+  Prisma,
+  type Invite as InviteRecord,
+} from "@/lib/generated/prisma/client";
 import { makeInviteSlug } from "./ids";
 import { DEFAULT_INTRO_LINE, DEFAULT_TEMPLATE_ID } from "./inviteDefaults";
 
@@ -40,19 +44,79 @@ export type Invite = {
   updated_at: Date;
 };
 
-type InviteRow = Invite;
+function parseScheduleItems(
+  value: Prisma.JsonValue | null,
+): Invite["schedule_items"] {
+  if (!Array.isArray(value)) return null;
+  const items = value.flatMap((item) => {
+    if (!item || typeof item !== "object" || Array.isArray(item)) return [];
+    const rec = item as Record<string, unknown>;
+    if (typeof rec.time !== "string" || typeof rec.label !== "string") {
+      return [];
+    }
+    return [
+      {
+        time: rec.time,
+        label: rec.label,
+        ...(typeof rec.description === "string"
+          ? { description: rec.description }
+          : {}),
+      },
+    ];
+  });
+  return items.length ? items : null;
+}
 
-const COLUMNS = `id::text as id, user_id::text as user_id, slug, template_id,
-  variant_id, colour_theme_id,
-  partner_one, partner_two, event_at, venue_name, venue_address,
-  message, accent_color, intro_line, ceremony_time, reception_time,
-  invite_mode, schedule_items,
-  dress_code, registry_url, accommodation_note, rsvp_deadline,
-  hero_image, gallery_images, venue_lat, venue_lng,
-  published, created_at, updated_at`;
+function parseGalleryImages(
+  value: Prisma.JsonValue | null,
+): Invite["gallery_images"] {
+  if (!Array.isArray(value)) return null;
+  const items = value.flatMap((item) => {
+    if (!item || typeof item !== "object" || Array.isArray(item)) return [];
+    const rec = item as Record<string, unknown>;
+    if (typeof rec.src !== "string") return [];
+    return [
+      {
+        src: rec.src,
+        ...(typeof rec.alt === "string" ? { alt: rec.alt } : {}),
+      },
+    ];
+  });
+  return items.length ? items : null;
+}
 
-function mapInvite(row: InviteRow): Invite {
-  return row;
+function mapInvite(row: InviteRecord): Invite {
+  return {
+    id: row.id,
+    user_id: row.userId,
+    slug: row.slug,
+    template_id: row.templateId,
+    variant_id: row.variantId,
+    colour_theme_id: row.colourThemeId,
+    partner_one: row.partnerOne,
+    partner_two: row.partnerTwo,
+    event_at: row.eventAt,
+    venue_name: row.venueName,
+    venue_address: row.venueAddress,
+    message: row.message,
+    accent_color: row.accentColor,
+    intro_line: row.introLine,
+    ceremony_time: row.ceremonyTime,
+    reception_time: row.receptionTime,
+    invite_mode: row.inviteMode,
+    schedule_items: parseScheduleItems(row.scheduleItems),
+    dress_code: row.dressCode,
+    registry_url: row.registryUrl,
+    accommodation_note: row.accommodationNote,
+    rsvp_deadline: row.rsvpDeadline,
+    hero_image: row.heroImage,
+    gallery_images: parseGalleryImages(row.galleryImages),
+    venue_lat: row.venueLat,
+    venue_lng: row.venueLng,
+    published: row.published,
+    created_at: row.createdAt,
+    updated_at: row.updatedAt,
+  };
 }
 
 function normalizeIntroLine(value?: string | null) {
@@ -61,35 +125,30 @@ function normalizeIntroLine(value?: string | null) {
 }
 
 export async function listInvitesForUser(userId: string) {
-  const rows = await query<InviteRow>(
-    `select ${COLUMNS} from invites where user_id = $1 order by updated_at desc`,
-    [userId],
-  );
+  const rows = await prisma.invite.findMany({
+    where: { userId },
+    orderBy: { updatedAt: "desc" },
+  });
   return rows.map(mapInvite);
 }
 
 export async function getInviteByIdForUser(id: string, userId: string) {
-  const rows = await query<InviteRow>(
-    `select ${COLUMNS} from invites where id = $1 and user_id = $2 limit 1`,
-    [id, userId],
-  );
-  return rows[0] ? mapInvite(rows[0]) : null;
+  const row = await prisma.invite.findFirst({
+    where: { id, userId },
+  });
+  return row ? mapInvite(row) : null;
 }
 
 export async function getPublishedInviteBySlug(slug: string) {
-  const rows = await query<InviteRow>(
-    `select ${COLUMNS} from invites where slug = $1 and published = true limit 1`,
-    [slug],
-  );
-  return rows[0] ? mapInvite(rows[0]) : null;
+  const row = await prisma.invite.findFirst({
+    where: { slug, published: true },
+  });
+  return row ? mapInvite(row) : null;
 }
 
 export async function getInviteById(id: string) {
-  const rows = await query<InviteRow>(
-    `select ${COLUMNS} from invites where id = $1 limit 1`,
-    [id],
-  );
-  return rows[0] ? mapInvite(rows[0]) : null;
+  const row = await prisma.invite.findUnique({ where: { id } });
+  return row ? mapInvite(row) : null;
 }
 
 export type CreateInviteInput = {
@@ -123,49 +182,39 @@ export type CreateInviteInput = {
 
 export async function createInvite(input: CreateInviteInput) {
   const slug = makeInviteSlug(input.partnerOne, input.partnerTwo);
-  const accent = input.accentColor ?? "#B79B7A";
-  const published = input.published ?? true;
-  const rows = await query<InviteRow>(
-    `insert into invites (
-       user_id, slug, template_id, variant_id, colour_theme_id,
-       partner_one, partner_two, event_at,
-       venue_name, venue_address, message, accent_color,
-       intro_line, ceremony_time, reception_time, invite_mode, schedule_items,
-       dress_code,
-       registry_url, accommodation_note, rsvp_deadline,
-       hero_image, gallery_images, venue_lat, venue_lng, published
-     ) values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26)
-     returning ${COLUMNS}`,
-    [
-      input.userId,
+  const row = await prisma.invite.create({
+    data: {
+      userId: input.userId,
       slug,
-      DEFAULT_TEMPLATE_ID,
-      input.variantId ?? "classic",
-      input.colourThemeId ?? "ivory",
-      input.partnerOne,
-      input.partnerTwo,
-      input.eventAt,
-      input.venueName,
-      input.venueAddress || null,
-      input.message || null,
-      accent,
-      normalizeIntroLine(input.introLine),
-      null,
-      null,
-      input.inviteMode ?? "wedding",
-      input.scheduleItems?.length ? JSON.stringify(input.scheduleItems) : null,
-      input.dressCode || null,
-      input.registryUrl || null,
-      input.accommodationNote || null,
-      input.rsvpDeadline || null,
-      input.heroImage || null,
-      input.galleryImages ? JSON.stringify(input.galleryImages) : null,
-      input.venueLat ?? null,
-      input.venueLng ?? null,
-      published,
-    ],
-  );
-  return mapInvite(rows[0]);
+      templateId: DEFAULT_TEMPLATE_ID,
+      variantId: input.variantId ?? "classic",
+      colourThemeId: input.colourThemeId ?? "ivory",
+      partnerOne: input.partnerOne,
+      partnerTwo: input.partnerTwo,
+      eventAt: input.eventAt,
+      venueName: input.venueName,
+      venueAddress: input.venueAddress || null,
+      message: input.message || null,
+      accentColor: input.accentColor ?? "#B79B7A",
+      introLine: normalizeIntroLine(input.introLine),
+      inviteMode: input.inviteMode ?? "wedding",
+      scheduleItems: input.scheduleItems?.length
+        ? (input.scheduleItems as Prisma.InputJsonValue)
+        : Prisma.JsonNull,
+      dressCode: input.dressCode || null,
+      registryUrl: input.registryUrl || null,
+      accommodationNote: input.accommodationNote || null,
+      rsvpDeadline: input.rsvpDeadline || null,
+      heroImage: input.heroImage || null,
+      galleryImages: input.galleryImages
+        ? (input.galleryImages as Prisma.InputJsonValue)
+        : Prisma.JsonNull,
+      venueLat: input.venueLat ?? null,
+      venueLng: input.venueLng ?? null,
+      published: input.published ?? true,
+    },
+  });
+  return mapInvite(row);
 }
 
 export type UpdateInviteInput = {
@@ -201,96 +250,65 @@ export async function updateInvite(
   userId: string,
   input: UpdateInviteInput,
 ) {
-  const current = await getInviteByIdForUser(id, userId);
+  const current = await prisma.invite.findFirst({
+    where: { id, userId },
+    select: { id: true },
+  });
   if (!current) return null;
 
-  const rows = await query<InviteRow>(
-    `update invites set
-       partner_one = $3,
-       partner_two = $4,
-       event_at = $5,
-       venue_name = $6,
-       venue_address = $7,
-       message = $8,
-       accent_color = $9,
-       variant_id = $10,
-       colour_theme_id = $11,
-       intro_line = $12,
-       ceremony_time = $13,
-       reception_time = $14,
-       invite_mode = $15,
-       schedule_items = $16,
-       dress_code = $17,
-       registry_url = $18,
-       accommodation_note = $19,
-       rsvp_deadline = $20,
-       hero_image = $21,
-       gallery_images = $22,
-       venue_lat = $23,
-       venue_lng = $24,
-       published = $25,
-       updated_at = now()
-     where id = $1 and user_id = $2
-     returning ${COLUMNS}`,
-    [
-      id,
-      userId,
-      input.partnerOne ?? current.partner_one,
-      input.partnerTwo ?? current.partner_two,
-      input.eventAt ?? current.event_at.toISOString(),
-      input.venueName ?? current.venue_name,
-      input.venueAddress === undefined ? current.venue_address : input.venueAddress,
-      input.message === undefined ? current.message : input.message,
-      input.accentColor ?? current.accent_color,
-      input.variantId ?? current.variant_id,
-      input.colourThemeId ?? current.colour_theme_id,
-      input.introLine === undefined
-        ? current.intro_line
-        : normalizeIntroLine(input.introLine),
-      current.ceremony_time,
-      current.reception_time,
-      input.inviteMode ?? current.invite_mode,
-      input.scheduleItems === undefined
-        ? current.schedule_items
-          ? JSON.stringify(current.schedule_items)
-          : null
-        : input.scheduleItems?.length
-          ? JSON.stringify(input.scheduleItems)
-          : null,
-      input.dressCode === undefined
-        ? current.dress_code
-        : input.dressCode || null,
-      input.registryUrl === undefined
-        ? current.registry_url
-        : input.registryUrl || null,
-      input.accommodationNote === undefined
-        ? current.accommodation_note
-        : input.accommodationNote || null,
-      input.rsvpDeadline === undefined
-        ? current.rsvp_deadline
-        : input.rsvpDeadline || null,
-      input.heroImage === undefined ? current.hero_image : input.heroImage,
-      input.galleryImages === undefined
-        ? current.gallery_images
-          ? JSON.stringify(current.gallery_images)
-          : null
-        : input.galleryImages
-          ? JSON.stringify(input.galleryImages)
-          : null,
-      input.venueLat === undefined ? current.venue_lat : input.venueLat,
-      input.venueLng === undefined ? current.venue_lng : input.venueLng,
-      input.published ?? current.published,
-    ],
-  );
-  return rows[0] ? mapInvite(rows[0]) : null;
+  const row = await prisma.invite.update({
+    where: { id },
+    data: {
+      partnerOne: input.partnerOne,
+      partnerTwo: input.partnerTwo,
+      eventAt: input.eventAt,
+      venueName: input.venueName,
+      venueAddress: input.venueAddress,
+      message: input.message,
+      accentColor: input.accentColor,
+      variantId: input.variantId,
+      colourThemeId: input.colourThemeId,
+      introLine:
+        input.introLine === undefined
+          ? undefined
+          : normalizeIntroLine(input.introLine),
+      inviteMode: input.inviteMode,
+      scheduleItems:
+        input.scheduleItems === undefined
+          ? undefined
+          : input.scheduleItems?.length
+            ? (input.scheduleItems as Prisma.InputJsonValue)
+            : Prisma.JsonNull,
+      dressCode:
+        input.dressCode === undefined ? undefined : input.dressCode || null,
+      registryUrl:
+        input.registryUrl === undefined ? undefined : input.registryUrl || null,
+      accommodationNote:
+        input.accommodationNote === undefined
+          ? undefined
+          : input.accommodationNote || null,
+      rsvpDeadline:
+        input.rsvpDeadline === undefined
+          ? undefined
+          : input.rsvpDeadline || null,
+      heroImage: input.heroImage,
+      galleryImages:
+        input.galleryImages === undefined
+          ? undefined
+          : input.galleryImages
+            ? (input.galleryImages as Prisma.InputJsonValue)
+            : Prisma.JsonNull,
+      venueLat: input.venueLat,
+      venueLng: input.venueLng,
+      published: input.published,
+    },
+  });
+  return mapInvite(row);
 }
 
 export async function deleteInvite(id: string, userId: string) {
-  const rows = await query<{ id: string }>(
-    `delete from invites
-     where id = $1 and user_id = $2
-     returning id::text as id`,
-    [id, userId],
-  );
-  return Boolean(rows[0]);
+  const result = await prisma.invite.deleteMany({
+    where: { id, userId },
+  });
+  return result.count > 0;
 }

@@ -3,37 +3,61 @@
 .nav {
   position: sticky;
   top: 0;
-  z-index: 20;
-  display: flex;
+  z-index: 40;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  justify-content: space-between;
   gap: 1rem;
-  padding: 1rem clamp(1.25rem, 4vw, 3rem);
-  backdrop-filter: blur(14px);
-  background: rgba(246, 243, 238, 0.78);
+  padding: 1rem clamp(1.25rem, 4vw, 3.5rem);
+  backdrop-filter: blur(16px);
+  background: rgba(250, 246, 241, 0.86);
   border-bottom: 1px solid transparent;
 }
 
 .brand {
   font-family: $font-display;
-  font-size: 1.35rem;
+  font-size: 1.55rem;
   letter-spacing: -0.03em;
   text-decoration: none;
+  justify-self: start;
+}
+
+.links {
+  display: none;
+  align-items: center;
+  gap: clamp(0.85rem, 1.6vw, 1.6rem);
+  justify-self: center;
+}
+
+.link {
+  color: $color-ink;
+  text-decoration: none;
+  font-size: 0.9rem;
+  opacity: 0.78;
+  white-space: nowrap;
+  transition: opacity 160ms ease;
+
+  &:hover {
+    opacity: 1;
+  }
 }
 
 .actions {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  justify-content: flex-end;
+  gap: 0.85rem;
+  justify-self: end;
 }
 
-.link {
-  color: $color-muted;
+.signIn {
+  color: $color-ink;
   text-decoration: none;
-  font-size: 0.95rem;
+  font-size: 0.92rem;
+  opacity: 0.8;
 
   &:hover {
-    color: $color-ink;
+    opacity: 1;
   }
 }
 
@@ -44,20 +68,37 @@
   gap: 0.4rem;
   border: 0;
   border-radius: 999px;
-  padding: 0.65rem 1.15rem;
-  background: $color-ink;
+  padding: 0.7rem 1.2rem;
+  background: $color-seal;
   color: #fff;
   text-decoration: none;
-  font-size: 0.92rem;
+  font-size: 0.9rem;
   cursor: pointer;
   transition: transform 160ms ease, background 160ms ease;
 
   &:hover {
     transform: translateY(-1px);
-    background: #000;
+    background: #4a1420;
+  }
+}
+
+@media (min-width: 980px) {
+  .links {
+    display: flex;
+  }
+}
+
+@media (max-width: 979px) {
+  .nav {
+    grid-template-columns: 1fr auto;
   }
 
-  &Seal {
-    background: $color-seal;
+  .signIn {
+    display: none;
+  }
+
+  .button {
+    padding: 0.65rem 1rem;
+    font-size: 0.85rem;
   }
 }

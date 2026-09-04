@@ -9,7 +9,7 @@ Create an invite in the admin, share a public link or personalised guest links, 
 - **Next.js 16** (App Router, Turbopack, `output: "standalone"`)
 - **React 19**
 - **Auth.js** (`next-auth` v5) for creator accounts
-- **Postgres** via the `pg` driver
+- **Postgres** via **Prisma ORM** (`pg` driver adapter)
 - **Sass modules** + Tailwind CSS
 - **Framer Motion** + **GSAP** for invite motion
 - Optional **Cloudinary** for production image uploads (local filesystem is the default)
@@ -30,8 +30,8 @@ Create an invite in the admin, share a public link or personalised guest links, 
 
 ## Prerequisites
 
-- Node.js 20+
-- Docker (for local Postgres)
+- Node.js 20.19+
+- Postgres 16+ (local install or hosted)
 - npm
 
 ## Local setup
@@ -44,17 +44,17 @@ cp .env.example .env.local
 Edit `.env.local`:
 
 ```bash
-DATABASE_URL=postgresql://sealedto:sealedto@localhost:54323/sealedto
+DATABASE_URL=postgresql://USER:PASSWORD@localhost:5432/sealedto
 AUTH_SECRET=replace-with-a-long-random-string   # openssl rand -base64 32
 NEXTAUTH_URL=http://localhost:3000
 AUTH_TRUST_HOST=true
 UPLOAD_PROVIDER=local
 ```
 
-Start Postgres, apply migrations, then run the app:
+Create the database, apply Prisma migrations, then run the app:
 
 ```bash
-npm run db:up
+createdb sealedto
 npm run db:migrate
 npm run dev
 ```
@@ -63,29 +63,22 @@ Open [http://localhost:3000](http://localhost:3000). Register a creator account,
 
 ### Database migrations
 
-Migrations live in `db/migrations/` and are applied by `npm run db:migrate` (`scripts/db-migrate.mjs`).
+Schema lives in `prisma/schema.prisma`. Migrations live in `prisma/migrations/` and are applied with Prisma Migrate.
 
-How it works:
+```bash
+npm run db:migrate        # prisma migrate deploy (CI / production)
+npm run db:migrate:dev    # prisma migrate dev (local schema changes)
+npm run db:studio         # Prisma Studio
+```
 
-1. Connects using `DATABASE_URL` (loads `.env.local` / `.env` locally; uses process env in production).
-2. Ensures a `schema_migrations` table exists.
-3. Applies each `*.sql` file in sorted order inside a transaction.
-4. Records the filename in `schema_migrations` so re-runs are safe — already-applied files are skipped (`Skip 001_init.sql`).
-
-Current migrations:
-
-| File | What it adds |
-| --- | --- |
-| `001_init.sql` | Users, invites, guests, auth rate limits |
-| `002_editorial_family.sql` | Template / variant / colour theme columns, hero + gallery |
-| `003_wedding_fields.sql` | Intro line, ceremony/reception times, dress code, registry, accommodation, RSVP deadline |
-| `004_phase_two.sql` | Invite mode, `schedule_items` JSONB, venue coordinates |
+`prisma.config.ts` loads `DATABASE_URL` from `.env.local` then `.env`.
 
 **Rules of thumb**
 
-- Always run `npm run db:migrate` after pulling schema changes.
-- Never edit an already-applied migration in a shared/prod database — add a new numbered file instead.
-- Migrations are idempotent at the runner level (skip if applied). Individual SQL should still use safe patterns (`if not exists`, etc.) where practical.
+- Always run `npm run db:migrate` after pulling schema changes (or `db:migrate:dev` when you change the schema locally).
+- Never edit an already-applied migration in a shared/prod database — create a new Prisma migration instead.
+
+If you still have a database created by the old hand-written SQL migrations, use a fresh database. The Prisma init migration is not a drop-in replay of those files.
 
 ## Scripts
 
@@ -97,9 +90,10 @@ Current migrations:
 | `npm run start:standalone` | `node .next/standalone/server.js` |
 | `npm run lint` | ESLint |
 | `npm test` | Vitest |
-| `npm run db:up` | Start Docker Postgres on port `54323` |
-| `npm run db:down` | Stop local Postgres |
-| `npm run db:migrate` | Apply pending SQL migrations |
+| `npm run db:migrate` | Apply pending Prisma migrations (`prisma migrate deploy`) |
+| `npm run db:migrate:dev` | Create/apply migrations from schema changes |
+| `npm run db:studio` | Open Prisma Studio |
+| `npm run db:generate` | Regenerate Prisma Client |
 
 ## Environment variables
 
@@ -121,7 +115,7 @@ Current migrations:
 
 ## Deploy to Railway
 
-The app is already configured for Railway: Next.js `output: "standalone"` and a migrate script that only needs `DATABASE_URL`.
+The app is already configured for Railway: Next.js `output: "standalone"` and Prisma Migrate that only needs `DATABASE_URL`.
 
 ### 1. Create the project
 
@@ -141,7 +135,7 @@ You should have two services in the same project: the **web** app and **Postgres
 | Start command | `node .next/standalone/server.js` |
 | Custom start / release command | `npm run db:migrate` |
 
-Put `npm run db:migrate` on the **release / pre-deploy** step so schema updates run before the new process starts. The migrate runner is safe to run on every deploy — it skips files already recorded in `schema_migrations`.
+Put `npm run db:migrate` on the **release / pre-deploy** step so schema updates run before the new process starts. Prisma records applied migrations in `_prisma_migrations` and skips them on later deploys.
 
 If Railway’s UI only exposes a single start command, use:
 
@@ -175,9 +169,7 @@ CLOUDINARY_API_SECRET=<from Cloudinary>
 
 ### 5. Verify the deploy
 
-1. Confirm the release logs show migrations applied or skipped, e.g.:
-   - `Applied 001_init.sql`
-   - `Skip 001_init.sql` on later deploys
+1. Confirm the release logs show Prisma migrations applied, e.g. `20260903100000_init`.
 2. Open `/register`, create a creator account.
 3. Create an invite in `/admin`, upload a hero image (Cloudinary), publish, and open `/i/[slug]`.
 4. Add a curated guest and open their `/g/[token]` link.
@@ -188,7 +180,7 @@ CLOUDINARY_API_SECRET=<from Cloudinary>
 | --- | --- |
 | App boots but login redirects fail | Wrong `NEXTAUTH_URL`, or missing `AUTH_TRUST_HOST=true` |
 | `Missing DATABASE_URL` during migrate | Wire `DATABASE_URL` as `${{Postgres.DATABASE_URL}}` on the **web** service |
-| Migration fails mid-deploy | Check release logs; fix SQL / connection; re-deploy (already-applied files stay skipped) |
+| Migration fails mid-deploy | Check release logs; fix schema / connection; re-deploy (already-applied Prisma migrations stay recorded) |
 | Hero / gallery images vanish after redeploy | Switch to `UPLOAD_PROVIDER=cloudinary` — local disk is ephemeral |
 | Standalone start fails | Confirm build finished and start command is `node .next/standalone/server.js` |
 
@@ -208,7 +200,7 @@ CLOUDINARY_API_SECRET=<from Cloudinary>
 app/                  App Router pages + API routes
 components/admin/     Invite editor, guests, share kit
 components/invite/    Editorial template, sections, motion, themes
-db/migrations/        Ordered SQL migrations
-lib/                  DB access, invites, uploads, auth helpers
-scripts/db-migrate.mjs
+prisma/               Schema + Prisma migrations
+lib/                  Prisma client, invites, uploads, auth helpers
+lib/generated/        Generated Prisma Client (`npm run db:generate`)
 ```

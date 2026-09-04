@@ -1,14 +1,7 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
-import { query } from "./db/postgres";
-
-type UserRow = {
-  id: string;
-  email: string;
-  name: string | null;
-  password_hash: string;
-};
+import { prisma } from "./db/prisma";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   session: { strategy: "jwt" },
@@ -25,17 +18,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         const password = String(credentials?.password ?? "");
         if (!email || !password) return null;
 
-        const rows = await query<UserRow>(
-          `select id::text as id, email, name, password_hash
-           from users
-           where email = $1
-           limit 1`,
-          [email],
-        );
-        const user = rows[0];
+        const user = await prisma.user.findUnique({
+          where: { email },
+        });
         if (!user) return null;
 
-        const valid = await bcrypt.compare(password, user.password_hash);
+        const valid = await bcrypt.compare(password, user.passwordHash);
         if (!valid) return null;
 
         return {
