@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { SiteNav } from "@/components/SiteNav";
+import { PetalField } from "@/components/home/PetalField";
 import { TemplateCarousel } from "@/components/home/TemplateCarousel";
 import { TimelineTrack } from "@/components/home/TimelineTrack";
 import { getSessionUser } from "@/lib/session";
@@ -126,14 +127,7 @@ export default async function HomePage() {
       <SiteNav signedIn={Boolean(user?.id)} />
 
       <section className={styles.hero}>
-        <div className={styles.petalField} aria-hidden>
-          <span className={`${styles.petal} ${styles.petalA}`} />
-          <span className={`${styles.petal} ${styles.petalB}`} />
-          <span className={`${styles.petal} ${styles.petalC}`} />
-          <span className={`${styles.petal} ${styles.petalD}`} />
-          <span className={`${styles.petal} ${styles.petalE}`} />
-        </div>
-
+        <PetalField />
         <div className={styles.heroInner}>
           <div className={styles.heroCopy}>
             <h1 className={styles.headline}>
