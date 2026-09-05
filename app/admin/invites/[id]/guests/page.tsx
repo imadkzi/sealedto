@@ -45,9 +45,10 @@ export default async function GuestsPage({
     if (!owned) redirect("/admin");
 
     const displayName = String(formData.get("displayName") ?? "").trim();
+    const partySize = Number(formData.get("partySize") ?? 1);
     if (!displayName) redirect(`/admin/invites/${id}/guests?error=invalid`);
 
-    await createCuratedGuest(owned.id, displayName);
+    await createCuratedGuest(owned.id, displayName, partySize);
     redirect(`/admin/invites/${id}/guests`);
   }
 
@@ -80,11 +81,12 @@ export default async function GuestsPage({
 
     const guestId = String(formData.get("guestId") ?? "").trim();
     const displayName = String(formData.get("displayName") ?? "").trim();
+    const partySize = Number(formData.get("partySize") ?? 1);
     if (!guestId || !displayName) {
       redirect(`/admin/invites/${id}/guests?error=invalid`);
     }
 
-    await updateCuratedGuest(guestId, owned.id, displayName);
+    await updateCuratedGuest(guestId, owned.id, displayName, partySize);
     redirect(`/admin/invites/${id}/guests`);
   }
 
@@ -142,12 +144,27 @@ export default async function GuestsPage({
             <form action={addGuest} className={styles.form}>
               <h2 className={styles.inviteTitle}>Add curated guest</h2>
               <p className={styles.muted}>
-                Creates a personal link that greets them by name.
+                Creates a personal link that greets them by name and locks their
+                party size.
               </p>
-              <label className={styles.label}>
-                Guest name
-                <input className={styles.input} name="displayName" required />
-              </label>
+              <div className={styles.row}>
+                <label className={styles.label}>
+                  Guest name
+                  <input className={styles.input} name="displayName" required />
+                </label>
+                <label className={styles.label}>
+                  Party size
+                  <input
+                    className={styles.input}
+                    name="partySize"
+                    type="number"
+                    min={1}
+                    max={20}
+                    defaultValue={1}
+                    required
+                  />
+                </label>
+              </div>
               <button className={styles.button} type="submit">
                 Add guest
               </button>
@@ -188,6 +205,7 @@ export default async function GuestsPage({
                   guests.map((guest) => (
                     <GuestRowActions
                       key={guest.id}
+                      coupleNames={`${invite.partner_one} & ${invite.partner_two}`}
                       guest={{
                         id: guest.id,
                         display_name: guest.display_name,

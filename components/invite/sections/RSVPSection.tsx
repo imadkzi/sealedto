@@ -45,7 +45,7 @@ export function RSVPSection({ rsvp, invitation }: Props) {
             </div>
           </AnimatedReveal>
         ) : (
-          <AnimatedReveal variant="mask">
+          <AnimatedReveal variant="rise">
             <form className={styles.rsvpForm} onSubmit={rsvp.onSubmit}>
               {rsvp.mode === "public" && (
                 <label className={styles.rsvpLabel}>
@@ -73,17 +73,29 @@ export function RSVPSection({ rsvp, invitation }: Props) {
                 ))}
               </div>
 
-              <label className={styles.rsvpLabel}>
-                Party size
-                <input
-                  className={styles.rsvpInput}
-                  type="number"
-                  min={1}
-                  max={20}
-                  value={rsvp.partySize}
-                  onChange={(e) => rsvp.setPartySize(Number(e.target.value) || 1)}
-                />
-              </label>
+              {rsvp.isCurated ? (
+                <p className={styles.rsvpLocked}>
+                  Party size{" "}
+                  <strong>
+                    {rsvp.partySize}{" "}
+                    {rsvp.partySize === 1 ? "guest" : "guests"}
+                  </strong>
+                </p>
+              ) : (
+                <label className={styles.rsvpLabel}>
+                  Party size
+                  <input
+                    className={styles.rsvpInput}
+                    type="number"
+                    min={1}
+                    max={20}
+                    value={rsvp.partySize}
+                    onChange={(e) =>
+                      rsvp.setPartySize(Number(e.target.value) || 1)
+                    }
+                  />
+                </label>
+              )}
 
               <label className={styles.rsvpLabel}>
                 Note (optional)

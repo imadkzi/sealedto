@@ -59,6 +59,7 @@ model Invite {
   heroImage         String?    @map("hero_image")
   galleryImages     Json?      @map("gallery_images")
   introLine         String     @default("Together with their families") @map("intro_line")
+  eventLine         String     @default("the wedding of") @map("event_line")
   ceremonyTime      String?    @map("ceremony_time")
   receptionTime     String?    @map("reception_time")
   dressCode         String?    @map("dress_code")

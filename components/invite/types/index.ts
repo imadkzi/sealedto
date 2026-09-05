@@ -103,6 +103,8 @@ export interface Invitation {
   message?: string;
   /** Public eyebrow / intro copy. Defaults to “Together with their families”. */
   introLine?: string;
+  /** Connector before the names, e.g. “the wedding of”. */
+  eventLine?: string;
   registryUrl?: string;
   accommodationNote?: string;
 

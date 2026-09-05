@@ -10,7 +10,7 @@ export function SectionSpacing({ children, className, id, tone = "base" }: Props
   return (
     <section
       id={id}
-      className={`relative px-[clamp(1.5rem,5vw,4rem)] py-[clamp(4rem,10vh,8rem)] ${className ?? ""}`}
+      className={`relative px-[clamp(24px,5vw,64px)] py-[clamp(40px,6vh,76px)] ${className ?? ""}`}
       style={
         tone === "stone"
           ? {

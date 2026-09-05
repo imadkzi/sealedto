@@ -1,8 +1,12 @@
 .separator {
   display: flex;
   justify-content: center;
-  padding: 1.75rem 0;
+  padding: 28px 0;
   color: var(--invite-decor, var(--invite-accent));
+}
+
+.separatorLeft {
+  justify-content: flex-start;
 }
 
 /* Scale the glyphs about themselves, not the SVG origin. */

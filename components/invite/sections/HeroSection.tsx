@@ -1,13 +1,18 @@
 "use client";
 
-import { AnimatedReveal, ParallaxContainer, ScrollCue, SplitText } from "../core";
+import {
+  AnimatedReveal,
+  ParallaxContainer,
+  ScrollCue,
+  SplitText,
+} from "../core";
 import type { Invitation } from "../types";
 import { MediaPlaceholder } from "./MediaPlaceholder";
 import styles from "./sections.module.scss";
 
 interface Props {
   invitation: Invitation;
-  layout?: "default" | "split" | "minimal" | "fullscreen";
+  layout?: "default" | "split" | "minimal" | "fullscreen" | "cover";
 }
 
 export function HeroSection({ invitation, layout = "default" }: Props) {
@@ -27,42 +32,66 @@ export function HeroSection({ invitation, layout = "default" }: Props) {
         ? styles.heroMinimal
         : layout === "fullscreen"
           ? styles.heroFullscreen
-          : styles.hero;
+          : layout === "cover"
+            ? styles.heroCover
+            : styles.hero;
 
   const hasImage = Boolean(invitation.heroImage);
-  const showImage = layout !== "minimal" && hasImage;
+  const bleedImage = layout === "fullscreen" || layout === "cover";
+  const showImage = layout !== "minimal" && hasImage && !bleedImage;
   const showPlaceholder =
-    layout !== "minimal" &&
-    !hasImage &&
-    (layout === "split" || layout === "fullscreen");
+    layout !== "minimal" && !hasImage && (layout === "split" || bleedImage);
 
-  const eyebrow = guestName
-    ? `${guestName}, you are invited`
-    : invitation.introLine || "Together with their families";
+  const introLine = invitation.introLine || "Together with their families";
+  const eventLine =
+    invitation.eventLine ||
+    (invitation.mode === "save_the_date"
+      ? "to save the date for"
+      : "the wedding of");
 
   return (
     <section className={heroClass}>
-      {layout === "fullscreen" && hasImage && (
+      {bleedImage && hasImage && (
         <>
-          <div className={styles.heroFullscreenBg}>
+          <div
+            className={
+              layout === "cover" ? styles.heroCoverBg : styles.heroFullscreenBg
+            }
+          >
             <img
               src={invitation.heroImage}
               alt={`${bride.name} & ${groom.name}`}
             />
           </div>
-          <div className={styles.heroFullscreenOverlay} />
+          <div
+            className={
+              layout === "cover"
+                ? styles.heroCoverScrim
+                : styles.heroFullscreenOverlay
+            }
+          />
         </>
       )}
-      {layout === "fullscreen" && showPlaceholder ? (
+      {bleedImage && showPlaceholder ? (
         <MediaPlaceholder fullscreen label="Add a hero photo" />
       ) : null}
 
       <div className={styles.heroText}>
-        <AnimatedReveal variant="mask">
-          <p className={guestName ? styles.heroGreeting : styles.heroEyebrow}>
-            {eyebrow}
-          </p>
-        </AnimatedReveal>
+        <div className={styles.heroLead}>
+          <AnimatedReveal variant="mask">
+            <p className={styles.heroEyebrow}>{introLine}</p>
+          </AnimatedReveal>
+          {guestName ? (
+            <AnimatedReveal variant="mask" delay={0.08}>
+              <p className={styles.heroGreeting}>
+                {guestName}, you are invited to
+              </p>
+            </AnimatedReveal>
+          ) : null}
+          <AnimatedReveal variant="mask" delay={guestName ? 0.12 : 0.08}>
+            <p className={styles.heroEvent}>{eventLine}</p>
+          </AnimatedReveal>
+        </div>
         <h1 className={styles.heroNames}>
           <SplitText
             text={coupleDisplayName ?? `${bride.name} & ${groom.name}`}
@@ -78,7 +107,7 @@ export function HeroSection({ invitation, layout = "default" }: Props) {
         </AnimatedReveal>
       </div>
 
-      {showImage && layout !== "fullscreen" && (
+      {showImage && (
         <ParallaxContainer className={styles.heroImageWrap} speed={0.12}>
           <img
             src={invitation.heroImage}

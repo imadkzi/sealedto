@@ -19,7 +19,7 @@ export function GalleryLayout({ invitation, rsvp }: Omit<TemplateProps, "variant
   return (
     <PageWrapper>
       <ScrollIndicator />
-      <HeroSection invitation={invitation} />
+      <HeroSection invitation={invitation} layout="cover" />
       <GallerySection invitation={invitation} layout="immersive" />
       <QuoteSection invitation={invitation} />
       <CountdownSection invitation={invitation} />

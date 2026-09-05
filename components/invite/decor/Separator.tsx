@@ -17,6 +17,7 @@ interface Props {
   variant?: SeparatorVariant;
   width?: number;
   className?: string;
+  align?: "center" | "left";
 }
 
 /** Strokes ink themselves in; dots and glyphs pop after the rules land. */
@@ -88,13 +89,21 @@ const glyphs: Record<SeparatorVariant, React.ReactNode> = {
   ),
 };
 
-export function Separator({ variant = "line", width = 120, className }: Props) {
+export function Separator({
+  variant = "line",
+  width = 120,
+  className,
+  align = "center",
+}: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-60px 0px" });
   const reduced = useReducedMotion();
 
   return (
-    <div ref={ref} className={`${styles.separator} ${className ?? ""}`}>
+    <div
+      ref={ref}
+      className={`${styles.separator} ${align === "left" ? styles.separatorLeft : ""} ${className ?? ""}`}
+    >
       <motion.svg
         width={width}
         height="16"

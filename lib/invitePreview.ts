@@ -1,4 +1,4 @@
-import { DEFAULT_INTRO_LINE } from "@/lib/inviteDefaults";
+import { DEFAULT_INTRO_LINE, defaultEventLine } from "@/lib/inviteDefaults";
 import type { Invitation } from "@/components/invite/types";
 import type { GalleryImage } from "@/components/admin/GalleryField";
 import type { ItineraryItem } from "@/components/admin/ItineraryField";
@@ -13,6 +13,7 @@ export type InviteDraftValues = {
   venueAddress: string;
   message: string;
   introLine: string;
+  eventLine: string;
   inviteMode: "wedding" | "save_the_date";
   scheduleItems: ItineraryItem[];
   venueLat: number | null;
@@ -71,6 +72,8 @@ export function buildPreviewInvitation(draft: InviteDraftValues): Invitation {
     message: draft.message.trim() || undefined,
     story: draft.message.trim() || undefined,
     introLine: draft.introLine.trim() || DEFAULT_INTRO_LINE,
+    eventLine:
+      (draft.eventLine ?? "").trim() || defaultEventLine(draft.inviteMode),
     dressCode: draft.dressCode.trim() || undefined,
     registryUrl: draft.registryUrl.trim() || undefined,
     accommodationNote: draft.accommodationNote.trim() || undefined,

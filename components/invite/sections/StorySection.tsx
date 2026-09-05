@@ -16,8 +16,13 @@ export function StorySection({ invitation, layout = "default" }: Props) {
     <SectionSpacing id="story">
       <div className={layout === "split" ? styles.storySplit : styles.story}>
         <div>
-          <SectionTitle>Our Story</SectionTitle>
-          <Divider variant="leaf" />
+          <SectionTitle align={layout === "split" ? "left" : "center"}>
+            Our Story
+          </SectionTitle>
+          <Divider
+            variant="leaf"
+            align={layout === "split" ? "left" : "center"}
+          />
         </div>
         <AnimatedReveal variant="mask" delay={0.15}>
           <p className={styles.storyBody}>

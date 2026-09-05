@@ -26,7 +26,7 @@ export function SplitLayout({ invitation, rsvp }: Omit<TemplateProps, "variantId
       <CountdownSection invitation={invitation} />
       <VenueSection invitation={invitation} />
       <TimelineSection invitation={invitation} />
-      <GallerySection invitation={invitation} />
+      <GallerySection invitation={invitation} layout="split" />
       <DetailsSection invitation={invitation} />
       <QuoteSection invitation={invitation} />
       {invitation.rsvpEnabled && (

@@ -60,6 +60,7 @@
 .sectionTitle {
   font-size: clamp(2rem, 4.2vw, 3rem);
   max-width: 18ch;
+  font-weight: 600;
   color: $color-ink;
 }
 
@@ -68,6 +69,7 @@
   max-width: 18ch;
   margin: 0.55rem auto 2.75rem;
   text-align: center;
+  font-weight: 600;
   color: $color-ink;
 }
 
@@ -180,6 +182,16 @@
     drop-shadow(0 8px 14px rgba(61, 16, 24, 0.14));
 }
 
+@media (max-width: 979px) {
+  .petalDesktopOnly {
+    display: none;
+  }
+
+  .petal {
+    max-width: 28px;
+  }
+}
+
 @keyframes fall {
   0% {
     transform: translate3d(0, 0, 0) scale(0.94) rotate(0deg);
@@ -241,6 +253,7 @@
 
 .headline {
   font-size: clamp(2.35rem, 5vw, 3.65rem);
+  font-weight: 600;
   line-height: 1.1;
   max-width: 18ch;
   letter-spacing: -0.03em;
@@ -378,6 +391,7 @@
 .trustCopy {
   font-family: $font-display;
   font-size: clamp(1.05rem, 1.5vw, 1.2rem);
+  font-weight: 600;
   line-height: 1.35;
   color: $color-ink;
   max-width: 18ch;
@@ -631,9 +645,42 @@
   position: relative;
   width: min(100%, 34rem);
   margin: 0 auto;
+  overflow: visible;
+}
+
+.couplePetals {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.couplePetal {
+  position: absolute;
+  height: auto;
+  pointer-events: none;
+  user-select: none;
+}
+
+.couplePetalBehind {
+  z-index: 0;
+  opacity: 0.42;
+  filter: blur(2.4px);
+}
+
+.couplePetalMid {
+  z-index: 2;
+  opacity: 0.7;
+  filter: blur(1px);
+}
+
+.couplePetalFront {
+  z-index: 2;
+  opacity: 0.88;
 }
 
 .coupleImage {
+  position: relative;
+  z-index: 1;
   width: 100%;
   height: auto;
   filter: drop-shadow(0 24px 48px rgba(31, 20, 22, 0.14));
@@ -839,6 +886,7 @@
 .templateNames {
   font-family: $font-display;
   font-size: 1.35rem;
+  font-weight: 600;
   line-height: 1.15;
 }
 
@@ -1176,6 +1224,7 @@
 
   h2 {
     font-size: clamp(1.85rem, 3.5vw, 2.6rem);
+    font-weight: 600;
     color: #fff;
     max-width: 14ch;
     text-shadow: 0 1px 12px rgba(20, 4, 8, 0.35);
@@ -1223,7 +1272,8 @@
   align-items: baseline;
   justify-content: space-between;
   gap: 0.75rem;
-  padding: 1.25rem clamp(1.25rem, 4vw, 3.5rem) 2rem;
+  padding: 1.5rem clamp(1.25rem, 4vw, 3.5rem);
+  background: #efe6dc;
   color: $color-muted;
   font-size: 0.9rem;
 }
@@ -1231,6 +1281,7 @@
 .footerBrand {
   font-family: $font-display;
   font-size: 1.2rem;
+  font-weight: 600;
   color: $color-ink;
   text-decoration: none;
 }

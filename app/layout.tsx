@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
-import { Fraunces, Manrope, Jost } from "next/font/google";
+import { Cormorant_Garamond, Jost, Manrope, Prata } from "next/font/google";
 import "@/styles/tailwind.css";
 import "@/styles/globals.scss";
 
-const display = Fraunces({
+const display = Cormorant_Garamond({
   subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  style: ["normal", "italic"],
   variable: "--font-display",
 });
 
@@ -18,6 +20,13 @@ const editorial = Jost({
   subsets: ["latin"],
   weight: ["300", "400", "500"],
   variable: "--font-editorial",
+});
+
+/** Display serif for Editorial couple names and section titles. */
+const editorialDisplay = Prata({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-editorial-display",
 });
 
 export const metadata: Metadata = {
@@ -34,7 +43,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${display.variable} ${body.variable} ${editorial.variable}`}
+      className={`${display.variable} ${body.variable} ${editorial.variable} ${editorialDisplay.variable}`}
     >
       <body>{children}</body>
     </html>

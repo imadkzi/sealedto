@@ -5,6 +5,12 @@
   display: grid;
   place-items: center;
   padding: 2rem 1.25rem;
+  overflow-x: clip;
+  background:
+    radial-gradient(900px 420px at 8% -5%, rgba(92, 26, 36, 0.05), transparent 55%),
+    radial-gradient(700px 380px at 100% 12%, rgba(164, 132, 90, 0.07), transparent 48%),
+    radial-gradient(640px 360px at 70% 110%, rgba(92, 26, 36, 0.04), transparent 50%),
+    $color-bg;
 }
 
 .card {
@@ -12,7 +18,7 @@
   background: $color-paper;
   border: 1px solid $color-border;
   border-radius: $radius-lg;
-  padding: 1.75rem;
+  padding: 2rem 1.75rem;
   box-shadow: $shadow-soft;
   display: grid;
   gap: 1rem;
@@ -21,12 +27,15 @@
 .brand {
   font-family: $font-display;
   font-size: 1.6rem;
+  letter-spacing: -0.03em;
+  color: $color-ink;
   text-decoration: none;
 }
 
 .lead {
   color: $color-muted;
   font-size: 0.95rem;
+  line-height: 1.55;
 }
 
 .form {
@@ -36,26 +45,53 @@
 
 .label {
   display: grid;
-  gap: 0.35rem;
+  gap: 0.4rem;
   font-size: 0.88rem;
   color: $color-muted;
 }
 
 .input {
+  width: 100%;
   border: 1px solid $color-border;
-  border-radius: $radius-sm;
-  padding: 0.7rem 0.8rem;
-  background: #fff;
+  border-radius: $radius-md;
+  padding: 0.75rem 0.9rem;
+  background: $color-bg;
   color: $color-ink;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    background 160ms ease;
+
+  &:hover {
+    border-color: rgba(92, 26, 36, 0.22);
+  }
+
+  &:focus {
+    outline: none;
+    background: $color-paper;
+    border-color: rgba(92, 26, 36, 0.38);
+    box-shadow: 0 0 0 3px rgba(92, 26, 36, 0.1);
+  }
 }
 
 .button {
   border: 0;
   border-radius: 999px;
-  padding: 0.8rem 1rem;
+  padding: 0.85rem 1.2rem;
   background: $color-seal;
   color: #fff;
   cursor: pointer;
+  transition: transform 160ms ease, background 160ms ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    background: #4a1420;
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(92, 26, 36, 0.18);
+  }
 }
 
 .error {
@@ -66,4 +102,15 @@
 .alt {
   color: $color-muted;
   font-size: 0.92rem;
+
+  a {
+    color: $color-ink;
+    text-decoration-color: rgba(92, 26, 36, 0.28);
+    transition: color 160ms ease, text-decoration-color 160ms ease;
+
+    &:hover {
+      color: $color-seal;
+      text-decoration-color: $color-seal;
+    }
+  }
 }

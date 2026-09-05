@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { SiteNav } from "@/components/SiteNav";
+import { CouplePetals } from "@/components/home/CouplePetals";
 import { PetalField } from "@/components/home/PetalField";
 import { TemplateCarousel } from "@/components/home/TemplateCarousel";
 import { TimelineTrack } from "@/components/home/TimelineTrack";
@@ -136,7 +137,7 @@ export default async function HomePage() {
             </h1>
             <p className={styles.support}>
               Design a sealed e-vite, personalise guest links, and watch RSVPs
-              arrive in your admin — without another generic template.
+              arrive in your admin.
             </p>
 
             <div className={styles.heroCtas}>
@@ -168,8 +169,8 @@ export default async function HomePage() {
       <div className={styles.trustFloat}>
         <div className={styles.trustBar}>
           <p className={styles.trustCopy}>
-            Trusted by couples who want their day to feel personal from the
-            very first invite.
+            Trusted by couples who want their day to feel personal from the very
+            first invite.
           </p>
           <ul className={styles.trustItems}>
             {TRUST_ITEMS.map((item) => (
@@ -213,6 +214,7 @@ export default async function HomePage() {
           </div>
 
           <div className={styles.howVisual}>
+            <CouplePetals />
             <Image
               src="/assets/couple-asset.png"
               alt="Couple embracing at golden hour"
@@ -297,8 +299,8 @@ export default async function HomePage() {
           <div className={styles.finalCopy}>
             <h2>Ready to create your dream wedding invite?</h2>
             <p>
-              Join couples who chose Sealedto to start their journey
-              beautifully — personal invites, clear RSVPs, one calm dashboard.
+              Join couples who chose Sealedto to start their journey beautifully
+              — personal invites, clear RSVPs, one calm dashboard.
             </p>
             <div className={styles.finalActions}>
               <Link href={createHref} className={styles.finalPrimary}>

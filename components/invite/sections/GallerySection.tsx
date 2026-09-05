@@ -8,21 +8,26 @@ import styles from "./sections.module.scss";
 
 interface Props {
   invitation: Invitation;
-  layout?: "default" | "immersive";
+  layout?: "default" | "immersive" | "split";
 }
 
 export function GallerySection({ invitation, layout = "default" }: Props) {
   const { container, item } = useStagger({ variant: "scale", stagger: 0.09 });
   if (!invitation.gallery?.length) return null;
 
+  const galleryClass =
+    layout === "immersive"
+      ? styles.galleryImmersive
+      : layout === "split"
+        ? styles.gallerySplit
+        : styles.gallery;
+
   return (
     <SectionSpacing id="gallery">
       <SectionTitle>Gallery</SectionTitle>
       <Divider variant="wave" />
       <motion.div
-        className={
-          layout === "immersive" ? styles.galleryImmersive : styles.gallery
-        }
+        className={galleryClass}
         variants={container}
         initial="hidden"
         whileInView="visible"

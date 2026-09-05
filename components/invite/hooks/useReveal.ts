@@ -40,7 +40,8 @@ export function revealVariants(
     case "mask":
       return {
         hidden: { opacity: 0, clipPath: "inset(0% 0% 100% 0%)", y: y * 0.4 },
-        visible: { opacity: 1, clipPath: "inset(0% 0% 0% 0%)", y: 0 },
+        // Leave slack so focus rings are not clipped after the reveal.
+        visible: { opacity: 1, clipPath: "inset(-20px)", y: 0 },
         duration: 0.9,
         ease: EASE_EXPO,
       };

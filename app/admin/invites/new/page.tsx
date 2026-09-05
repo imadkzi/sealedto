@@ -1,7 +1,11 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getSessionUser } from "@/lib/session";
-import { createInvite, DEFAULT_INTRO_LINE } from "@/lib/invites";
+import {
+  createInvite,
+  DEFAULT_INTRO_LINE,
+  defaultEventLine,
+} from "@/lib/invites";
 import {
   InviteEditorShell,
   type InviteDraftValues,
@@ -64,6 +68,7 @@ function emptyDraft(): InviteDraftValues {
     venueAddress: "",
     message: "",
     introLine: DEFAULT_INTRO_LINE,
+    eventLine: defaultEventLine("wedding"),
     inviteMode: "wedding",
     scheduleItems: [
       { time: "14:00", label: "Ceremony" },
@@ -99,6 +104,7 @@ export default async function NewInvitePage() {
     const venueAddress = String(formData.get("venueAddress") ?? "").trim();
     const message = String(formData.get("message") ?? "").trim();
     const introLine = String(formData.get("introLine") ?? "").trim();
+    const eventLine = String(formData.get("eventLine") ?? "").trim();
     const inviteMode =
       formData.get("inviteMode") === "save_the_date"
         ? "save_the_date"
@@ -135,6 +141,7 @@ export default async function NewInvitePage() {
       venueAddress,
       message,
       introLine,
+      eventLine,
       inviteMode,
       scheduleItems,
       venueLat: venueLatRaw ? Number(venueLatRaw) : null,

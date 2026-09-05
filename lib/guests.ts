@@ -60,13 +60,24 @@ export async function getGuestByToken(token: string) {
   return row ? mapGuest(row) : null;
 }
 
-export async function createCuratedGuest(inviteId: string, displayName: string) {
+function clampPartySize(value: unknown) {
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed)) return 1;
+  return Math.min(20, Math.max(1, Math.round(parsed)));
+}
+
+export async function createCuratedGuest(
+  inviteId: string,
+  displayName: string,
+  partySize = 1,
+) {
   const row = await prisma.guest.create({
     data: {
       inviteId,
       displayName,
       token: makeGuestToken(),
       isCurated: true,
+      partySize: clampPartySize(partySize),
     },
   });
   return mapGuest(row);
@@ -102,6 +113,7 @@ export async function updateCuratedGuest(
   guestId: string,
   inviteId: string,
   displayName: string,
+  partySize?: number,
 ) {
   const current = await prisma.guest.findFirst({
     where: { id: guestId, inviteId, isCurated: true },
@@ -111,7 +123,12 @@ export async function updateCuratedGuest(
 
   const row = await prisma.guest.update({
     where: { id: guestId },
-    data: { displayName },
+    data: {
+      displayName,
+      ...(partySize === undefined
+        ? {}
+        : { partySize: clampPartySize(partySize) }),
+    },
   });
   return mapGuest(row);
 }
@@ -148,7 +165,7 @@ export async function submitPublicRsvp(input: {
 export async function submitCuratedRsvp(input: {
   guestId: string;
   status: Exclude<RsvpStatus, "pending">;
-  partySize: number;
+  partySize?: number;
   note?: string;
   displayName?: string;
 }) {
@@ -157,7 +174,9 @@ export async function submitCuratedRsvp(input: {
       where: { id: input.guestId },
       data: {
         rsvpStatus: input.status,
-        partySize: input.partySize,
+        ...(input.partySize === undefined
+          ? {}
+          : { partySize: clampPartySize(input.partySize) }),
         rsvpNote: input.note || null,
         displayName: input.displayName || undefined,
         rsvpAt: new Date(),

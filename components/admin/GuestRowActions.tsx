@@ -3,6 +3,7 @@
 import { useState } from "react";
 import styles from "@/styles/pages/Admin.module.scss";
 import guestStyles from "./GuestRowActions.module.scss";
+import { GuestShareButton } from "./GuestShareButton";
 
 type GuestRow = {
   id: string;
@@ -15,11 +16,17 @@ type GuestRow = {
 
 interface Props {
   guest: GuestRow;
+  coupleNames: string;
   updateAction: (formData: FormData) => Promise<void>;
   deleteAction: (formData: FormData) => Promise<void>;
 }
 
-export function GuestRowActions({ guest, updateAction, deleteAction }: Props) {
+export function GuestRowActions({
+  guest,
+  coupleNames,
+  updateAction,
+  deleteAction,
+}: Props) {
   const [editing, setEditing] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -38,7 +45,11 @@ export function GuestRowActions({ guest, updateAction, deleteAction }: Props) {
     <tr>
       <td>
         {editing && guest.is_curated ? (
-          <form action={updateAction} className={guestStyles.inlineForm}>
+          <form
+            id={`edit-guest-${guest.id}`}
+            action={updateAction}
+            className={guestStyles.inlineForm}
+          >
             <input type="hidden" name="guestId" value={guest.id} />
             <input
               className={styles.input}
@@ -68,10 +79,31 @@ export function GuestRowActions({ guest, updateAction, deleteAction }: Props) {
         )}
       </td>
       <td>{guest.rsvp_status}</td>
-      <td>{guest.party_size}</td>
+      <td>
+        {editing && guest.is_curated ? (
+          <input
+            className={styles.input}
+            form={`edit-guest-${guest.id}`}
+            name="partySize"
+            type="number"
+            min={1}
+            max={20}
+            defaultValue={guest.party_size}
+            required
+            aria-label="Party size"
+          />
+        ) : (
+          guest.party_size
+        )}
+      </td>
       <td>
         {guest.is_curated && guest.personalUrl ? (
           <div className={guestStyles.linkCell}>
+            <GuestShareButton
+              guestName={guest.display_name}
+              coupleNames={coupleNames}
+              url={guest.personalUrl}
+            />
             <button
               type="button"
               className={styles.ghost}

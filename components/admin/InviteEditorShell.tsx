@@ -1,7 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { DEFAULT_INTRO_LINE } from "@/lib/inviteDefaults";
+import {
+  DEFAULT_EVENT_LINE,
+  DEFAULT_INTRO_LINE,
+  DEFAULT_SAVE_THE_DATE_EVENT_LINE,
+  defaultEventLine,
+} from "@/lib/inviteDefaults";
 import {
   PREVIEW_DRAFT_KEY,
   type InviteDraftValues,
@@ -76,6 +81,7 @@ export function InviteEditorShell({
     eventAt: toDatetimeLocal(initial.eventAt),
     rsvpDeadline: toDateLocal(initial.rsvpDeadline),
     introLine: initial.introLine || DEFAULT_INTRO_LINE,
+    eventLine: initial.eventLine || defaultEventLine(initial.inviteMode),
     galleryImages: initial.galleryImages ?? [],
     inviteMode: initial.inviteMode ?? "wedding",
     scheduleItems: initial.scheduleItems ?? [],
@@ -113,7 +119,7 @@ export function InviteEditorShell({
 
   return (
     <div className={styles.shell}>
-      {beforeForm}
+      {beforeForm ? <div key="before-form">{beforeForm}</div> : null}
 
       <div className={styles.previewRow}>
         <div className={styles.previewCopy}>
@@ -165,6 +171,8 @@ export function InviteEditorShell({
           }
         }}
       >
+        <input type="hidden" name="introLine" value={draft.introLine} />
+        <input type="hidden" name="eventLine" value={draft.eventLine} />
         <section className={step === 0 ? styles.stage : styles.stageHidden}>
           <h2 className={adminStyles.inviteTitle}>Choose your design</h2>
           <InviteDesignPicker
@@ -204,10 +212,21 @@ export function InviteEditorShell({
             Intro line
             <input
               className={adminStyles.input}
-              name="introLine"
               value={draft.introLine}
               onChange={(e) => patch({ introLine: e.target.value })}
               placeholder={DEFAULT_INTRO_LINE}
+            />
+          </label>
+          <label className={adminStyles.label}>
+            Event line
+            <span className={adminStyles.muted}>
+              Shown before the names. Change this if it isn’t a wedding.
+            </span>
+            <input
+              className={adminStyles.input}
+              value={draft.eventLine}
+              onChange={(e) => patch({ eventLine: e.target.value })}
+              placeholder={defaultEventLine(draft.inviteMode)}
             />
           </label>
           <label className={adminStyles.label}>
@@ -329,18 +348,35 @@ export function InviteEditorShell({
         <section className={step === 6 ? styles.stage : styles.stageHidden}>
           <h2 className={adminStyles.inviteTitle}>Publish</h2>
           <label className={adminStyles.label}>
+            Event line
+            <input
+              className={adminStyles.input}
+              value={draft.eventLine}
+              onChange={(e) => patch({ eventLine: e.target.value })}
+              placeholder={defaultEventLine(draft.inviteMode)}
+            />
+          </label>
+          <label className={adminStyles.label}>
             Invite type
             <select
               className={adminStyles.select}
               name="inviteMode"
               value={draft.inviteMode}
-              onChange={(e) =>
+              onChange={(e) => {
+                const inviteMode = e.target.value as
+                  | "wedding"
+                  | "save_the_date";
+                const usingDefault =
+                  draft.eventLine === DEFAULT_EVENT_LINE ||
+                  draft.eventLine === DEFAULT_SAVE_THE_DATE_EVENT_LINE ||
+                  !draft.eventLine.trim();
                 patch({
-                  inviteMode: e.target.value as
-                    | "wedding"
-                    | "save_the_date",
-                })
-              }
+                  inviteMode,
+                  ...(usingDefault
+                    ? { eventLine: defaultEventLine(inviteMode) }
+                    : {}),
+                });
+              }}
             >
               <option value="wedding">Wedding invitation with RSVP</option>
               <option value="save_the_date">
@@ -372,8 +408,11 @@ export function InviteEditorShell({
           <button
             type="button"
             className={adminStyles.ghost}
-            disabled={step === 0}
-            onClick={() => setStep((current) => Math.max(0, current - 1))}
+            aria-disabled={step === 0}
+            onClick={() => {
+              if (step === 0) return;
+              setStep((current) => Math.max(0, current - 1));
+            }}
           >
             Back
           </button>

@@ -65,6 +65,12 @@
   background: $color-paper;
   border: 1px solid $color-border;
   color: $color-ink;
+
+  &:disabled,
+  &[aria-disabled="true"] {
+    opacity: 0.45;
+    cursor: default;
+  }
 }
 
 .pageHead {

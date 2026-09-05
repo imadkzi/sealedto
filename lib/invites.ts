@@ -4,9 +4,17 @@ import {
   type Invite as InviteRecord,
 } from "@/lib/generated/prisma/client";
 import { makeInviteSlug } from "./ids";
-import { DEFAULT_INTRO_LINE, DEFAULT_TEMPLATE_ID } from "./inviteDefaults";
+import {
+  DEFAULT_INTRO_LINE,
+  DEFAULT_TEMPLATE_ID,
+  defaultEventLine,
+} from "./inviteDefaults";
 
-export { DEFAULT_INTRO_LINE, DEFAULT_TEMPLATE_ID };
+export { DEFAULT_INTRO_LINE, DEFAULT_TEMPLATE_ID, defaultEventLine };
+export {
+  DEFAULT_EVENT_LINE,
+  DEFAULT_SAVE_THE_DATE_EVENT_LINE,
+} from "./inviteDefaults";
 
 export type Invite = {
   id: string;
@@ -23,6 +31,7 @@ export type Invite = {
   message: string | null;
   accent_color: string;
   intro_line: string;
+  event_line: string;
   ceremony_time: string | null;
   reception_time: string | null;
   invite_mode: "wedding" | "save_the_date";
@@ -101,6 +110,7 @@ function mapInvite(row: InviteRecord): Invite {
     message: row.message,
     accent_color: row.accentColor,
     intro_line: row.introLine,
+    event_line: row.eventLine,
     ceremony_time: row.ceremonyTime,
     reception_time: row.receptionTime,
     invite_mode: row.inviteMode,
@@ -122,6 +132,14 @@ function mapInvite(row: InviteRecord): Invite {
 function normalizeIntroLine(value?: string | null) {
   const trimmed = value?.trim();
   return trimmed || DEFAULT_INTRO_LINE;
+}
+
+function normalizeEventLine(
+  value?: string | null,
+  mode?: "wedding" | "save_the_date",
+) {
+  const trimmed = value?.trim();
+  return trimmed || defaultEventLine(mode);
 }
 
 export async function listInvitesForUser(userId: string) {
@@ -163,6 +181,7 @@ export type CreateInviteInput = {
   variantId?: string;
   colourThemeId?: string;
   introLine?: string;
+  eventLine?: string;
   inviteMode?: "wedding" | "save_the_date";
   scheduleItems?: Array<{
     time: string;
@@ -197,6 +216,7 @@ export async function createInvite(input: CreateInviteInput) {
       message: input.message || null,
       accentColor: input.accentColor ?? "#B79B7A",
       introLine: normalizeIntroLine(input.introLine),
+      eventLine: normalizeEventLine(input.eventLine, input.inviteMode),
       inviteMode: input.inviteMode ?? "wedding",
       scheduleItems: input.scheduleItems?.length
         ? (input.scheduleItems as Prisma.InputJsonValue)
@@ -228,6 +248,7 @@ export type UpdateInviteInput = {
   variantId?: string;
   colourThemeId?: string;
   introLine?: string;
+  eventLine?: string;
   inviteMode?: "wedding" | "save_the_date";
   scheduleItems?: Array<{
     time: string;
@@ -272,6 +293,10 @@ export async function updateInvite(
         input.introLine === undefined
           ? undefined
           : normalizeIntroLine(input.introLine),
+      eventLine:
+        input.eventLine === undefined
+          ? undefined
+          : normalizeEventLine(input.eventLine, input.inviteMode),
       inviteMode: input.inviteMode,
       scheduleItems:
         input.scheduleItems === undefined

@@ -5,6 +5,7 @@ import { ShareKit } from "@/components/admin/ShareKit";
 import { getSessionUser } from "@/lib/session";
 import {
   DEFAULT_INTRO_LINE,
+  defaultEventLine,
   deleteInvite,
   getInviteByIdForUser,
   updateInvite,
@@ -123,6 +124,7 @@ export default async function InviteAdminPage({
       venueAddress: String(formData.get("venueAddress") ?? "").trim(),
       message: String(formData.get("message") ?? "").trim(),
       introLine: String(formData.get("introLine") ?? "").trim(),
+      eventLine: String(formData.get("eventLine") ?? "").trim(),
       inviteMode,
       scheduleItems,
       venueLat: venueLatRaw ? Number(venueLatRaw) : null,
@@ -165,6 +167,7 @@ export default async function InviteAdminPage({
     venueAddress: invite.venue_address ?? "",
     message: invite.message ?? "",
     introLine: invite.intro_line || DEFAULT_INTRO_LINE,
+    eventLine: invite.event_line || defaultEventLine(invite.invite_mode),
     inviteMode: invite.invite_mode ?? "wedding",
     scheduleItems:
       invite.schedule_items ??
@@ -255,6 +258,7 @@ export default async function InviteAdminPage({
           guestHref={`/admin/invites/${invite.id}/guests`}
           beforeForm={
             <ShareKit
+              key="share-kit"
               inviteId={invite.id}
               publicUrl={publicUrl}
               published={invite.published}

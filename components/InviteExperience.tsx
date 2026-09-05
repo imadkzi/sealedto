@@ -38,7 +38,7 @@ export function InviteExperience({ invite, guest, mode }: Props) {
   );
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const { introDone, onIntroComplete, skipIntro } = usePageIntro();
+  const { introDone, onIntroComplete } = usePageIntro();
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -112,12 +112,13 @@ export function InviteExperience({ invite, guest, mode }: Props) {
 
   return (
     <InviteThemeProvider theme={theme}>
-      {!introDone && !skipIntro && (
+      {!introDone && (
         <IntroOverlay
           partnerOne={invite.partner_one}
           partnerTwo={invite.partner_two}
           guestName={guest?.is_curated ? guest.display_name : undefined}
           introLine={invitation.introLine}
+          eventLine={invitation.eventLine}
           onComplete={onIntroComplete}
         />
       )}

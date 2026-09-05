@@ -1,7 +1,7 @@
 import type { InvitationFonts, VariantDefinition, EditorialVariantId } from "../../types";
 
 export const editorialFonts: InvitationFonts = {
-  display: "var(--font-display)",
+  display: "var(--font-editorial-display)",
   body: "var(--font-editorial)",
 };
 
@@ -9,7 +9,7 @@ export const editorialVariants: VariantDefinition[] = [
   {
     id: "classic",
     name: "Classic",
-    description: "Large centred typography. Hero image. Elegant whitespace. Luxury magazine feel.",
+    description: "Centred names, portrait photo below. Elegant whitespace. Luxury stationery feel.",
   },
   {
     id: "split",
@@ -24,7 +24,7 @@ export const editorialVariants: VariantDefinition[] = [
   {
     id: "gallery",
     name: "Gallery",
-    description: "Photography-driven. Large immersive images. Minimal typography.",
+    description: "Photo-cover opening, then large immersive images. Minimal typography.",
   },
   {
     id: "fullscreen",

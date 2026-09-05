@@ -58,7 +58,6 @@ export async function POST(request: Request) {
     const updated = await submitCuratedRsvp({
       guestId: guest.id,
       status: status as Exclude<RsvpStatus, "pending">,
-      partySize,
       note,
     });
     return NextResponse.json({ ok: true, guest: updated });

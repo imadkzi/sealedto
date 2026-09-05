@@ -1,7 +1,10 @@
 import type { Invite } from "./invites";
-import { DEFAULT_INTRO_LINE } from "./inviteDefaults";
+import { DEFAULT_INTRO_LINE, defaultEventLine } from "./inviteDefaults";
 import type { Guest } from "./guests";
-import type { Invitation, InvitationScheduleItem } from "@/components/invite/types";
+import type {
+  Invitation,
+  InvitationScheduleItem,
+} from "@/components/invite/types";
 
 function buildSchedule(invite: Invite): InvitationScheduleItem[] | undefined {
   if (invite.schedule_items?.length) {
@@ -25,7 +28,7 @@ function buildSchedule(invite: Invite): InvitationScheduleItem[] | undefined {
 }
 
 /**
- * Map a DB Invite row (+optional guest) into the rich Invitation model.
+ * Map a DB Invite row (+optional guest) inthe rich Invitation model.
  * Sections without data stay undefined → components no-op.
  */
 export function toInvitation(invite: Invite, guest?: Guest | null): Invitation {
@@ -40,7 +43,10 @@ export function toInvitation(invite: Invite, guest?: Guest | null): Invitation {
     bride: { name: invite.partner_one },
     groom: { name: invite.partner_two },
 
-    weddingDate: invite.event_at instanceof Date ? invite.event_at : new Date(invite.event_at),
+    weddingDate:
+      invite.event_at instanceof Date
+        ? invite.event_at
+        : new Date(invite.event_at),
 
     venue: {
       name: invite.venue_name,
@@ -61,6 +67,7 @@ export function toInvitation(invite: Invite, guest?: Guest | null): Invitation {
     message: invite.message ?? undefined,
     story: invite.message ?? undefined,
     introLine: invite.intro_line || DEFAULT_INTRO_LINE,
+    eventLine: invite.event_line || defaultEventLine(invite.invite_mode),
     dressCode: invite.dress_code ?? undefined,
     registryUrl: invite.registry_url ?? undefined,
     accommodationNote: invite.accommodation_note ?? undefined,

@@ -17,7 +17,7 @@ export async function generateMetadata({
     description:
       invite.invite_mode === "save_the_date"
         ? `Save the date for ${title}`
-        : `You're invited to the wedding of ${title}`,
+        : `You're invited ${invite.event_line || "the wedding of"} ${title}`,
   };
 }
 

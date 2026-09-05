@@ -16,7 +16,7 @@ import {
 } from "../../../sections";
 import type { TemplateProps } from "../../../types";
 
-/** Classic: centred hero, optional hero image, elegant whitespace, luxury magazine. */
+/** Classic: centred names, optional portrait photo below, elegant whitespace. */
 export function ClassicLayout({ invitation, rsvp }: Omit<TemplateProps, "variantId">) {
   return (
     <PageWrapper>
