@@ -1,0 +1,59 @@
+@use "../../styles/tokens" as *;
+
+.wrap {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.tool {
+  border: 1px solid $color-border;
+  border-radius: 999px;
+  background: #fff;
+  color: $color-ink;
+  padding: 0.28rem 0.7rem;
+  font: inherit;
+  font-size: 0.78rem;
+  cursor: pointer;
+
+  &[data-active="true"] {
+    background: $color-ink;
+    color: #fff;
+    border-color: $color-ink;
+  }
+}
+
+.editor {
+  min-height: 5.5rem;
+  border: 1px solid $color-border;
+  border-radius: $radius-sm;
+  padding: 0.7rem 0.8rem;
+  background: #fff;
+  color: $color-ink;
+  font: inherit;
+  line-height: 1.45;
+  outline: none;
+
+  &:empty::before {
+    content: attr(data-placeholder);
+    color: $color-muted;
+  }
+
+  p {
+    margin: 0;
+  }
+
+  p + p {
+    margin-top: 0.35rem;
+  }
+}
+
+.hint {
+  font-size: 0.78rem;
+  color: $color-muted;
+}

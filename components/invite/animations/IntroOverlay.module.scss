@@ -37,6 +37,38 @@
   text-transform: uppercase;
   color: var(--invite-muted);
   margin: 0;
+
+  p {
+    margin: 0;
+  }
+}
+
+.intro {
+  display: grid;
+  gap: 0.4rem;
+  color: var(--invite-ink);
+  margin: 0;
+  max-width: 28rem;
+
+  p {
+    margin: 0;
+  }
+
+  p:first-child {
+    font-family: var(--invite-font-display, var(--font-display)), Georgia, "Times New Roman", serif;
+    font-size: clamp(0.95rem, 2.4vw, 1.25rem);
+    letter-spacing: 0.02em;
+    line-height: 1.5;
+  }
+
+  p:not(:first-child),
+  em {
+    font-size: 0.78rem;
+    letter-spacing: 0.02em;
+    font-style: italic;
+    color: var(--invite-muted);
+    text-transform: none;
+  }
 }
 
 .greeting {

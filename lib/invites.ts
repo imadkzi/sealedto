@@ -9,6 +9,7 @@ import {
   DEFAULT_TEMPLATE_ID,
   defaultEventLine,
 } from "./inviteDefaults";
+import { sanitizeIntroHtml } from "./introHtml";
 
 export { DEFAULT_INTRO_LINE, DEFAULT_TEMPLATE_ID, defaultEventLine };
 export {
@@ -130,8 +131,7 @@ function mapInvite(row: InviteRecord): Invite {
 }
 
 function normalizeIntroLine(value?: string | null) {
-  const trimmed = value?.trim();
-  return trimmed || DEFAULT_INTRO_LINE;
+  return sanitizeIntroHtml(value ?? "") || DEFAULT_INTRO_LINE;
 }
 
 function normalizeEventLine(

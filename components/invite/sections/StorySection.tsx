@@ -6,11 +6,27 @@ import styles from "./sections.module.scss";
 
 interface Props {
   invitation: Invitation;
-  layout?: "default" | "split";
+  layout?: "default" | "split" | "gallery";
 }
 
 export function StorySection({ invitation, layout = "default" }: Props) {
   if (!invitation.story && !invitation.message) return null;
+
+  if (layout === "gallery") {
+    return (
+      <SectionSpacing id="story" tone="stone">
+        <SectionTitle>Our Story</SectionTitle>
+        <Divider variant="wave" />
+        <div className={styles.storyGallery}>
+          <AnimatedReveal variant="mask" delay={0.12}>
+            <p className={styles.storyGalleryBody}>
+              {invitation.story ?? invitation.message}
+            </p>
+          </AnimatedReveal>
+        </div>
+      </SectionSpacing>
+    );
+  }
 
   return (
     <SectionSpacing id="story">

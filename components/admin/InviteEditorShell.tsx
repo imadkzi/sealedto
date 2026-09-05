@@ -25,6 +25,7 @@ import { VenueLookup } from "./VenueLookup";
 import { HeroImageField } from "./HeroImageField";
 import { GalleryField } from "./GalleryField";
 import { ItineraryField } from "./ItineraryField";
+import { IntroLineEditor } from "./IntroLineEditor";
 import adminStyles from "@/styles/pages/Admin.module.scss";
 import styles from "./InviteEditorShell.module.scss";
 
@@ -210,10 +211,9 @@ export function InviteEditorShell({
           </div>
           <label className={adminStyles.label}>
             Intro line
-            <input
-              className={adminStyles.input}
+            <IntroLineEditor
               value={draft.introLine}
-              onChange={(e) => patch({ introLine: e.target.value })}
+              onChange={(introLine) => patch({ introLine })}
               placeholder={DEFAULT_INTRO_LINE}
             />
           </label>

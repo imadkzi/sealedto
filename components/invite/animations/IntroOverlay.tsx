@@ -3,6 +3,10 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { useReducedMotion } from "../hooks/useReducedMotion";
+import {
+  introUsesClassicEyebrow,
+  sanitizeIntroHtml,
+} from "@/lib/introHtml";
 import styles from "./IntroOverlay.module.scss";
 
 interface Props {
@@ -25,7 +29,7 @@ export function IntroOverlay({
   const rootRef = useRef<HTMLDivElement>(null);
   const initialsRef = useRef<HTMLDivElement>(null);
   const lineRef = useRef<HTMLDivElement>(null);
-  const line1Ref = useRef<HTMLParagraphElement>(null);
+  const line1Ref = useRef<HTMLDivElement>(null);
   const greetingRef = useRef<HTMLParagraphElement>(null);
   const eventRef = useRef<HTMLParagraphElement>(null);
   const namesRef = useRef<HTMLHeadingElement>(null);
@@ -152,9 +156,18 @@ export function IntroOverlay({
           {initials}
         </div>
         <div ref={lineRef} className={styles.line} />
-        <p ref={line1Ref} className={styles.copy}>
-          {introLine}
-        </p>
+        <div
+          ref={line1Ref}
+          className={
+            introUsesClassicEyebrow(sanitizeIntroHtml(introLine))
+              ? styles.copy
+              : styles.intro
+          }
+          dir="auto"
+          dangerouslySetInnerHTML={{
+            __html: sanitizeIntroHtml(introLine),
+          }}
+        />
         {guestName ? (
           <p ref={greetingRef} className={styles.greeting}>
             {guestName}, you are invited to

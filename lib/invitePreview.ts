@@ -1,4 +1,5 @@
 import { DEFAULT_INTRO_LINE, defaultEventLine } from "@/lib/inviteDefaults";
+import { sanitizeIntroHtml } from "@/lib/introHtml";
 import type { Invitation } from "@/components/invite/types";
 import type { GalleryImage } from "@/components/admin/GalleryField";
 import type { ItineraryItem } from "@/components/admin/ItineraryField";
@@ -71,7 +72,7 @@ export function buildPreviewInvitation(draft: InviteDraftValues): Invitation {
       : undefined,
     message: draft.message.trim() || undefined,
     story: draft.message.trim() || undefined,
-    introLine: draft.introLine.trim() || DEFAULT_INTRO_LINE,
+    introLine: sanitizeIntroHtml(draft.introLine) || DEFAULT_INTRO_LINE,
     eventLine:
       (draft.eventLine ?? "").trim() || defaultEventLine(draft.inviteMode),
     dressCode: draft.dressCode.trim() || undefined,

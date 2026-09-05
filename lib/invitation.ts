@@ -1,5 +1,6 @@
 import type { Invite } from "./invites";
 import { DEFAULT_INTRO_LINE, defaultEventLine } from "./inviteDefaults";
+import { sanitizeIntroHtml } from "./introHtml";
 import type { Guest } from "./guests";
 import type {
   Invitation,
@@ -66,7 +67,7 @@ export function toInvitation(invite: Invite, guest?: Guest | null): Invitation {
 
     message: invite.message ?? undefined,
     story: invite.message ?? undefined,
-    introLine: invite.intro_line || DEFAULT_INTRO_LINE,
+    introLine: sanitizeIntroHtml(invite.intro_line) || DEFAULT_INTRO_LINE,
     eventLine: invite.event_line || defaultEventLine(invite.invite_mode),
     dressCode: invite.dress_code ?? undefined,
     registryUrl: invite.registry_url ?? undefined,

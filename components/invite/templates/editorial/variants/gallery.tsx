@@ -8,6 +8,7 @@ import {
   VenueSection,
   QuoteSection,
   DetailsSection,
+  StorySection,
   RSVPSection,
   FooterSection,
   StickyRsvpCta,
@@ -25,6 +26,7 @@ export function GalleryLayout({ invitation, rsvp }: Omit<TemplateProps, "variant
       <CountdownSection invitation={invitation} />
       <VenueSection invitation={invitation} />
       <DetailsSection invitation={invitation} />
+      <StorySection invitation={invitation} layout="gallery" />
       {invitation.rsvpEnabled && (
         <RSVPSection rsvp={rsvp} invitation={invitation} />
       )}

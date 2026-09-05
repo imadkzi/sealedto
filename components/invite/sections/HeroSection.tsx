@@ -7,6 +7,10 @@ import {
   SplitText,
 } from "../core";
 import type { Invitation } from "../types";
+import {
+  introUsesClassicEyebrow,
+  sanitizeIntroHtml,
+} from "@/lib/introHtml";
 import { MediaPlaceholder } from "./MediaPlaceholder";
 import styles from "./sections.module.scss";
 
@@ -43,6 +47,8 @@ export function HeroSection({ invitation, layout = "default" }: Props) {
     layout !== "minimal" && !hasImage && (layout === "split" || bleedImage);
 
   const introLine = invitation.introLine || "Together with their families";
+  const introHtml = sanitizeIntroHtml(introLine);
+  const introClassic = introUsesClassicEyebrow(introHtml);
   const eventLine =
     invitation.eventLine ||
     (invitation.mode === "save_the_date"
@@ -79,7 +85,10 @@ export function HeroSection({ invitation, layout = "default" }: Props) {
       <div className={styles.heroText}>
         <div className={styles.heroLead}>
           <AnimatedReveal variant="mask">
-            <p className={styles.heroEyebrow}>{introLine}</p>
+            <div
+              className={introClassic ? styles.heroEyebrow : styles.heroIntro}
+              dangerouslySetInnerHTML={{ __html: introHtml }}
+            />
           </AnimatedReveal>
           {guestName ? (
             <AnimatedReveal variant="mask" delay={0.08}>
