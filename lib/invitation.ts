@@ -1,5 +1,9 @@
 import type { Invite } from "./invites";
-import { DEFAULT_INTRO_LINE, defaultEventLine } from "./inviteDefaults";
+import {
+  DEFAULT_INTRO_LINE,
+  DEFAULT_STORY_TITLE,
+  defaultEventLine,
+} from "./inviteDefaults";
 import { sanitizeIntroHtml } from "./introHtml";
 import type { Guest } from "./guests";
 import type {
@@ -67,9 +71,12 @@ export function toInvitation(invite: Invite, guest?: Guest | null): Invitation {
 
     message: invite.message ?? undefined,
     story: invite.message ?? undefined,
+    storyTitle: invite.story_title?.trim() || DEFAULT_STORY_TITLE,
     introLine: sanitizeIntroHtml(invite.intro_line) || DEFAULT_INTRO_LINE,
     eventLine: invite.event_line || defaultEventLine(invite.invite_mode),
     dressCode: invite.dress_code ?? undefined,
+    dressCodeGroom: invite.dress_code_groom ?? undefined,
+    dressCodeBride: invite.dress_code_bride ?? undefined,
     registryUrl: invite.registry_url ?? undefined,
     accommodationNote: invite.accommodation_note ?? undefined,
     schedule: buildSchedule(invite),

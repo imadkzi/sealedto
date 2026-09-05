@@ -29,14 +29,16 @@ export function sanitizeIntroHtml(input: string): string {
       .join("");
   }
 
-  const tokens = raw.replace(/\u00a0/g, " ").match(
-    /<\/?(?:p|div|br|em|i|strong|b)\b[^>]*>|[^<]+/gi,
-  );
+  const tokens = raw
+    .replace(/\u00a0/g, " ")
+    .match(/<\/?(?:p|div|br|em|i|strong|b)\b[^>]*>|[^<]+/gi);
   if (!tokens) return "";
 
   const out: string[] = [];
   for (const token of tokens) {
-    const tag = token.match(/^<\/?(p|div|br|em|i|strong|b)\b/i)?.[1]?.toLowerCase();
+    const tag = token
+      .match(/^<\/?(p|div|br|em|i|strong|b)\b/i)?.[1]
+      ?.toLowerCase();
     if (!tag) {
       out.push(escapeText(decodeEntities(token)));
       continue;
@@ -50,7 +52,10 @@ export function sanitizeIntroHtml(input: string): string {
     }
   }
 
-  let html = out.join("").replace(/<p>\s*<\/p>/g, "").trim();
+  let html = out
+    .join("")
+    .replace(/<p>\s*<\/p>/g, "")
+    .trim();
   if (html && !/<p[\s>]/i.test(html)) html = `<p>${html}</p>`;
   return html;
 }

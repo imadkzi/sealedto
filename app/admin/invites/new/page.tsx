@@ -67,6 +67,7 @@ function emptyDraft(): InviteDraftValues {
     venueName: "",
     venueAddress: "",
     message: "",
+    storyTitle: "",
     introLine: DEFAULT_INTRO_LINE,
     eventLine: defaultEventLine("wedding"),
     inviteMode: "wedding",
@@ -77,6 +78,8 @@ function emptyDraft(): InviteDraftValues {
     venueLat: null,
     venueLng: null,
     dressCode: "",
+    dressCodeGroom: "",
+    dressCodeBride: "",
     registryUrl: "",
     accommodationNote: "",
     rsvpDeadline: "",
@@ -103,6 +106,7 @@ export default async function NewInvitePage() {
     const venueName = String(formData.get("venueName") ?? "").trim();
     const venueAddress = String(formData.get("venueAddress") ?? "").trim();
     const message = String(formData.get("message") ?? "").trim();
+    const storyTitle = String(formData.get("storyTitle") ?? "").trim();
     const introLine = String(formData.get("introLine") ?? "").trim();
     const eventLine = String(formData.get("eventLine") ?? "").trim();
     const inviteMode =
@@ -115,6 +119,8 @@ export default async function NewInvitePage() {
     const venueLatRaw = String(formData.get("venueLat") ?? "").trim();
     const venueLngRaw = String(formData.get("venueLng") ?? "").trim();
     const dressCode = String(formData.get("dressCode") ?? "").trim();
+    const dressCodeGroom = String(formData.get("dressCodeGroom") ?? "").trim();
+    const dressCodeBride = String(formData.get("dressCodeBride") ?? "").trim();
     const registryUrl = String(formData.get("registryUrl") ?? "").trim();
     const accommodationNote = String(
       formData.get("accommodationNote") ?? "",
@@ -140,6 +146,7 @@ export default async function NewInvitePage() {
       venueName,
       venueAddress,
       message,
+      storyTitle: storyTitle || undefined,
       introLine,
       eventLine,
       inviteMode,
@@ -147,6 +154,8 @@ export default async function NewInvitePage() {
       venueLat: venueLatRaw ? Number(venueLatRaw) : null,
       venueLng: venueLngRaw ? Number(venueLngRaw) : null,
       dressCode: dressCode || undefined,
+      dressCodeGroom: dressCodeGroom || undefined,
+      dressCodeBride: dressCodeBride || undefined,
       registryUrl: registryUrl || undefined,
       accommodationNote: accommodationNote || undefined,
       rsvpDeadline: rsvpDeadlineRaw

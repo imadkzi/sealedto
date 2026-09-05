@@ -11,7 +11,11 @@ interface Props {
 export function DetailsSection({ invitation }: Props) {
   if (invitation.mode === "save_the_date") return null;
 
+  const hasDressSides = Boolean(
+    invitation.dressCodeGroom?.trim() || invitation.dressCodeBride?.trim(),
+  );
   const hasDetails =
+    hasDressSides ||
     invitation.dressCode ||
     invitation.registryUrl ||
     invitation.accommodationNote;
@@ -24,11 +28,32 @@ export function DetailsSection({ invitation }: Props) {
         <SectionTitle>Details</SectionTitle>
         <Divider variant="line" />
         <div className={styles.detailsGrid}>
-          {invitation.dressCode ? (
+          {hasDressSides || invitation.dressCode ? (
             <AnimatedReveal variant="unfold">
               <div className={styles.detailItem}>
                 <p className={styles.detailLabel}>Dress code</p>
-                <p className={styles.detailBody}>{invitation.dressCode}</p>
+                {hasDressSides ? (
+                  <div className={styles.dressSides}>
+                    {invitation.dressCodeGroom?.trim() ? (
+                      <div className={styles.dressSide}>
+                        <p className={styles.dressSideLabel}>Groom side</p>
+                        <p className={styles.detailBody}>
+                          {invitation.dressCodeGroom}
+                        </p>
+                      </div>
+                    ) : null}
+                    {invitation.dressCodeBride?.trim() ? (
+                      <div className={styles.dressSide}>
+                        <p className={styles.dressSideLabel}>Bride side</p>
+                        <p className={styles.detailBody}>
+                          {invitation.dressCodeBride}
+                        </p>
+                      </div>
+                    ) : null}
+                  </div>
+                ) : (
+                  <p className={styles.detailBody}>{invitation.dressCode}</p>
+                )}
               </div>
             </AnimatedReveal>
           ) : null}

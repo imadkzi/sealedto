@@ -15,6 +15,7 @@ export { DEFAULT_INTRO_LINE, DEFAULT_TEMPLATE_ID, defaultEventLine };
 export {
   DEFAULT_EVENT_LINE,
   DEFAULT_SAVE_THE_DATE_EVENT_LINE,
+  DEFAULT_STORY_TITLE,
 } from "./inviteDefaults";
 
 export type Invite = {
@@ -30,6 +31,7 @@ export type Invite = {
   venue_name: string;
   venue_address: string | null;
   message: string | null;
+  story_title: string | null;
   accent_color: string;
   intro_line: string;
   event_line: string;
@@ -42,6 +44,8 @@ export type Invite = {
     description?: string;
   }> | null;
   dress_code: string | null;
+  dress_code_groom: string | null;
+  dress_code_bride: string | null;
   registry_url: string | null;
   accommodation_note: string | null;
   rsvp_deadline: Date | null;
@@ -109,6 +113,7 @@ function mapInvite(row: InviteRecord): Invite {
     venue_name: row.venueName,
     venue_address: row.venueAddress,
     message: row.message,
+    story_title: row.storyTitle,
     accent_color: row.accentColor,
     intro_line: row.introLine,
     event_line: row.eventLine,
@@ -117,6 +122,8 @@ function mapInvite(row: InviteRecord): Invite {
     invite_mode: row.inviteMode,
     schedule_items: parseScheduleItems(row.scheduleItems),
     dress_code: row.dressCode,
+    dress_code_groom: row.dressCodeGroom,
+    dress_code_bride: row.dressCodeBride,
     registry_url: row.registryUrl,
     accommodation_note: row.accommodationNote,
     rsvp_deadline: row.rsvpDeadline,
@@ -140,6 +147,11 @@ function normalizeEventLine(
 ) {
   const trimmed = value?.trim();
   return trimmed || defaultEventLine(mode);
+}
+
+function normalizeStoryTitle(value?: string | null) {
+  const trimmed = value?.trim();
+  return trimmed || null;
 }
 
 export async function listInvitesForUser(userId: string) {
@@ -177,6 +189,7 @@ export type CreateInviteInput = {
   venueName: string;
   venueAddress?: string;
   message?: string;
+  storyTitle?: string;
   accentColor?: string;
   variantId?: string;
   colourThemeId?: string;
@@ -191,6 +204,8 @@ export type CreateInviteInput = {
   venueLat?: number | null;
   venueLng?: number | null;
   dressCode?: string;
+  dressCodeGroom?: string;
+  dressCodeBride?: string;
   registryUrl?: string;
   accommodationNote?: string;
   rsvpDeadline?: string | null;
@@ -214,6 +229,7 @@ export async function createInvite(input: CreateInviteInput) {
       venueName: input.venueName,
       venueAddress: input.venueAddress || null,
       message: input.message || null,
+      storyTitle: normalizeStoryTitle(input.storyTitle),
       accentColor: input.accentColor ?? "#B79B7A",
       introLine: normalizeIntroLine(input.introLine),
       eventLine: normalizeEventLine(input.eventLine, input.inviteMode),
@@ -222,6 +238,8 @@ export async function createInvite(input: CreateInviteInput) {
         ? (input.scheduleItems as Prisma.InputJsonValue)
         : Prisma.JsonNull,
       dressCode: input.dressCode || null,
+      dressCodeGroom: input.dressCodeGroom?.trim() || null,
+      dressCodeBride: input.dressCodeBride?.trim() || null,
       registryUrl: input.registryUrl || null,
       accommodationNote: input.accommodationNote || null,
       rsvpDeadline: input.rsvpDeadline || null,
@@ -244,6 +262,7 @@ export type UpdateInviteInput = {
   venueName?: string;
   venueAddress?: string | null;
   message?: string | null;
+  storyTitle?: string | null;
   accentColor?: string;
   variantId?: string;
   colourThemeId?: string;
@@ -258,6 +277,8 @@ export type UpdateInviteInput = {
   venueLat?: number | null;
   venueLng?: number | null;
   dressCode?: string | null;
+  dressCodeGroom?: string | null;
+  dressCodeBride?: string | null;
   registryUrl?: string | null;
   accommodationNote?: string | null;
   rsvpDeadline?: string | null;
@@ -286,6 +307,10 @@ export async function updateInvite(
       venueName: input.venueName,
       venueAddress: input.venueAddress,
       message: input.message,
+      storyTitle:
+        input.storyTitle === undefined
+          ? undefined
+          : normalizeStoryTitle(input.storyTitle),
       accentColor: input.accentColor,
       variantId: input.variantId,
       colourThemeId: input.colourThemeId,
@@ -306,6 +331,14 @@ export async function updateInvite(
             : Prisma.JsonNull,
       dressCode:
         input.dressCode === undefined ? undefined : input.dressCode || null,
+      dressCodeGroom:
+        input.dressCodeGroom === undefined
+          ? undefined
+          : input.dressCodeGroom?.trim() || null,
+      dressCodeBride:
+        input.dressCodeBride === undefined
+          ? undefined
+          : input.dressCodeBride?.trim() || null,
       registryUrl:
         input.registryUrl === undefined ? undefined : input.registryUrl || null,
       accommodationNote:

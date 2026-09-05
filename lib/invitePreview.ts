@@ -1,4 +1,8 @@
-import { DEFAULT_INTRO_LINE, defaultEventLine } from "@/lib/inviteDefaults";
+import {
+  DEFAULT_INTRO_LINE,
+  DEFAULT_STORY_TITLE,
+  defaultEventLine,
+} from "@/lib/inviteDefaults";
 import { sanitizeIntroHtml } from "@/lib/introHtml";
 import type { Invitation } from "@/components/invite/types";
 import type { GalleryImage } from "@/components/admin/GalleryField";
@@ -13,6 +17,7 @@ export type InviteDraftValues = {
   venueName: string;
   venueAddress: string;
   message: string;
+  storyTitle?: string;
   introLine: string;
   eventLine: string;
   inviteMode: "wedding" | "save_the_date";
@@ -20,6 +25,8 @@ export type InviteDraftValues = {
   venueLat: number | null;
   venueLng: number | null;
   dressCode: string;
+  dressCodeGroom?: string;
+  dressCodeBride?: string;
   registryUrl: string;
   accommodationNote: string;
   rsvpDeadline: string;
@@ -72,10 +79,13 @@ export function buildPreviewInvitation(draft: InviteDraftValues): Invitation {
       : undefined,
     message: draft.message.trim() || undefined,
     story: draft.message.trim() || undefined,
+    storyTitle: (draft.storyTitle ?? "").trim() || DEFAULT_STORY_TITLE,
     introLine: sanitizeIntroHtml(draft.introLine) || DEFAULT_INTRO_LINE,
     eventLine:
       (draft.eventLine ?? "").trim() || defaultEventLine(draft.inviteMode),
     dressCode: draft.dressCode.trim() || undefined,
+    dressCodeGroom: (draft.dressCodeGroom ?? "").trim() || undefined,
+    dressCodeBride: (draft.dressCodeBride ?? "").trim() || undefined,
     registryUrl: draft.registryUrl.trim() || undefined,
     accommodationNote: draft.accommodationNote.trim() || undefined,
     schedule: schedule.length ? schedule : undefined,

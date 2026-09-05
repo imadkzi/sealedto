@@ -86,9 +86,13 @@ export interface Invitation {
   rsvpEnabled: boolean;
 
   story?: string;
+  /** Heading above the story / message. Defaults to “Our Story”. */
+  storyTitle?: string;
   gallery?: InvitationGalleryImage[];
   schedule?: InvitationScheduleItem[];
   dressCode?: string;
+  dressCodeGroom?: string;
+  dressCodeBride?: string;
 
   palette: InvitationPalette;
   fonts?: InvitationFonts;

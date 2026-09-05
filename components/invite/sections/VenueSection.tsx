@@ -1,9 +1,16 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { MapPin, Navigation } from "lucide-react";
 import { SectionSpacing, SectionTitle, AnimatedReveal, Divider } from "../core";
 import type { Invitation } from "../types";
 import styles from "./sections.module.scss";
+
+function osmEmbedUrl(lat: number, lng: number) {
+  const pad = 0.012;
+  const bbox = `${lng - pad},${lat - pad},${lng + pad},${lat + pad}`;
+  return `https://www.openstreetmap.org/export/embed.html?bbox=${encodeURIComponent(bbox)}&layer=mapnik&marker=${lat}%2C${lng}`;
+}
 
 interface Props {
   invitation: Invitation;
@@ -27,9 +34,14 @@ export function VenueSection({ invitation }: Props) {
       href: `https://www.waze.com/ul?q=${query}&navigate=yes`,
     },
   ];
-  const staticMapUrl = venue.coordinates
-    ? `https://staticmap.openstreetmap.de/staticmap.php?center=${venue.coordinates.lat},${venue.coordinates.lng}&zoom=14&size=800x360&maptype=mapnik&markers=${venue.coordinates.lat},${venue.coordinates.lng},red-pushpin`
+  const [mapReady, setMapReady] = useState(false);
+  const mapEmbedUrl = venue.coordinates
+    ? osmEmbedUrl(venue.coordinates.lat, venue.coordinates.lng)
     : null;
+
+  useEffect(() => {
+    setMapReady(true);
+  }, []);
 
   return (
     <SectionSpacing id="venue">
@@ -44,21 +56,18 @@ export function VenueSection({ invitation }: Props) {
             <p className={styles.venueAddress}>{venue.address}</p>
           </AnimatedReveal>
         )}
-        {staticMapUrl ? (
+        {mapEmbedUrl ? (
           <AnimatedReveal variant="scale" delay={0.25}>
-            <a
-              href={mapLinks[0].href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={styles.venueMapThumbnail}
-              aria-label="Open venue in Google Maps"
-            >
-              <img
-                src={staticMapUrl}
-                alt={`Map showing ${venue.name}`}
-                loading="lazy"
-              />
-            </a>
+            <div className={styles.venueMapThumbnail}>
+              {mapReady ? (
+                <iframe
+                  title={`Map showing ${venue.name}`}
+                  src={mapEmbedUrl}
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
+              ) : null}
+            </div>
           </AnimatedReveal>
         ) : null}
         <AnimatedReveal variant="tilt" delay={0.3}>

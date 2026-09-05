@@ -64,21 +64,21 @@ export function SplitText({
     >
       {words.map((word, wi) => (
         <span key={`${word}-${wi}`} className={styles.word} aria-hidden>
-          {by === "char"
-            ? Array.from(word).map((ch, ci) => (
-                <motion.span
-                  key={`${ch}-${ci}`}
-                  className={styles.piece}
-                  variants={piece}
-                >
-                  {ch}
-                </motion.span>
-              ))
-            : (
-                <motion.span className={styles.piece} variants={piece}>
-                  {word}
-                </motion.span>
-              )}
+          {by === "char" ? (
+            Array.from(word).map((ch, ci) => (
+              <motion.span
+                key={`${ch}-${ci}`}
+                className={styles.piece}
+                variants={piece}
+              >
+                {ch}
+              </motion.span>
+            ))
+          ) : (
+            <motion.span className={styles.piece} variants={piece}>
+              {word}
+            </motion.span>
+          )}
           {wi < words.length - 1 ? " " : null}
         </span>
       ))}

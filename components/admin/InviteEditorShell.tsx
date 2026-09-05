@@ -83,6 +83,9 @@ export function InviteEditorShell({
     rsvpDeadline: toDateLocal(initial.rsvpDeadline),
     introLine: initial.introLine || DEFAULT_INTRO_LINE,
     eventLine: initial.eventLine || defaultEventLine(initial.inviteMode),
+    storyTitle: initial.storyTitle ?? "",
+    dressCodeGroom: initial.dressCodeGroom ?? "",
+    dressCodeBride: initial.dressCodeBride ?? "",
     galleryImages: initial.galleryImages ?? [],
     inviteMode: initial.inviteMode ?? "wedding",
     scheduleItems: initial.scheduleItems ?? [],
@@ -276,6 +279,16 @@ export function InviteEditorShell({
         <section className={step === 4 ? styles.stage : styles.stageHidden}>
           <h2 className={adminStyles.inviteTitle}>Story & details</h2>
           <label className={adminStyles.label}>
+            Story title
+            <input
+              className={adminStyles.input}
+              name="storyTitle"
+              value={draft.storyTitle}
+              onChange={(e) => patch({ storyTitle: e.target.value })}
+              placeholder="Our Story"
+            />
+          </label>
+          <label className={adminStyles.label}>
             Message
             <textarea
               className={adminStyles.textarea}
@@ -285,13 +298,23 @@ export function InviteEditorShell({
             />
           </label>
           <label className={adminStyles.label}>
-            Dress code
+            Groom side
             <input
               className={adminStyles.input}
-              name="dressCode"
-              value={draft.dressCode}
-              onChange={(e) => patch({ dressCode: e.target.value })}
-              placeholder="Black tie optional"
+              name="dressCodeGroom"
+              value={draft.dressCodeGroom ?? ""}
+              onChange={(e) => patch({ dressCodeGroom: e.target.value })}
+              placeholder="Stone / champagne"
+            />
+          </label>
+          <label className={adminStyles.label}>
+            Bride side
+            <input
+              className={adminStyles.input}
+              name="dressCodeBride"
+              value={draft.dressCodeBride ?? ""}
+              onChange={(e) => patch({ dressCodeBride: e.target.value })}
+              placeholder="Mint green / sage"
             />
           </label>
           <label className={adminStyles.label}>

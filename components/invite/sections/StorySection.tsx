@@ -1,6 +1,7 @@
 "use client";
 
 import { SectionSpacing, SectionTitle, AnimatedReveal, Divider } from "../core";
+import { DEFAULT_STORY_TITLE } from "@/lib/inviteDefaults";
 import type { Invitation } from "../types";
 import styles from "./sections.module.scss";
 
@@ -12,10 +13,12 @@ interface Props {
 export function StorySection({ invitation, layout = "default" }: Props) {
   if (!invitation.story && !invitation.message) return null;
 
+  const title = invitation.storyTitle?.trim() || DEFAULT_STORY_TITLE;
+
   if (layout === "gallery") {
     return (
       <SectionSpacing id="story" tone="stone">
-        <SectionTitle>Our Story</SectionTitle>
+        <SectionTitle>{title}</SectionTitle>
         <Divider variant="wave" />
         <div className={styles.storyGallery}>
           <AnimatedReveal variant="mask" delay={0.12}>
@@ -33,7 +36,7 @@ export function StorySection({ invitation, layout = "default" }: Props) {
       <div className={layout === "split" ? styles.storySplit : styles.story}>
         <div>
           <SectionTitle align={layout === "split" ? "left" : "center"}>
-            Our Story
+            {title}
           </SectionTitle>
           <Divider
             variant="leaf"
